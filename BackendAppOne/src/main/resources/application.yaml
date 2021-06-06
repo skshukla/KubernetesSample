@@ -1,0 +1,33 @@
+app:
+  name: Demo
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+server:
+  port: 8080
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+      temp:
+        use_jdbc_metadata_defaults: false
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+  datasource:
+    data: classpath:sql/init.sql
+    driverClassName: org.postgresql.Driver
+    platform: postgres
+    url: jdbc:postgresql://postgres-service:5432/mydb
+    username: sachin
+    password: 123456
+    initialization-mode: always
+
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
