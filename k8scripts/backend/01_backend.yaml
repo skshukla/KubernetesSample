@@ -23,7 +23,7 @@ spec:
   selector:
     matchLabels:
       run: backend-app-one
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       labels:
