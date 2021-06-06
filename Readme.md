@@ -1,21 +1,20 @@
+###### Clone The Repository
 
-######Clone The Repository
+    `git clone https://github.com/skshukla/KubernetesSample.git`
 
-`git clone https://github.com/skshukla/KubernetesSample.git`
+    `cd KubernetesSample`
 
-`cd KubernetesSample`
+    `mkdir -p /tmp/postgres`
 
-`mkdir -p /tmp/postgres`
-
-`chmod +x ./scripts/*.sh`
+    `chmod +x ./scripts/*.sh`
 
 
 
 ###### Run Postgres
 
-`./scripts/run_pg.sh`
+    `./scripts/run_pg.sh`
 
 
 ###### Run Deployment/Services and Ingress
 
-`/scripts/run.sh`
+    `/scripts/run.sh`
