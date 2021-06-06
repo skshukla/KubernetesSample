@@ -17,4 +17,4 @@
 
 ###### Run Deployment/Services and Ingress
 
-    /scripts/run.sh
+    ./scripts/run.sh
