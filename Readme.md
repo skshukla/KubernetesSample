@@ -12,7 +12,7 @@
 
 ###### Run Postgres
 
-    ./scripts/run_pg.sh
+    ./scripts/run.sh
 
 
 ###### Run Deployment/Services and Ingress
