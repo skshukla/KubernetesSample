@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJ_DIR=$SCRIPT_DIR/..
+
 
 
 function runPostgres() {
@@ -15,9 +15,7 @@ function runPostgres() {
     kubectl delete persistentvolumeclaims postgres-pv-claim || true;
     kubectl delete persistentvolumes postgres-pv-volume || true;
 
-    kubectl apply -f $PROJ_DIR/k8scripts/database/01_config_map.yaml
-    kubectl apply -f $PROJ_DIR/k8scripts/database/02_persistent_volume.yaml
-    kubectl apply -f $PROJ_DIR/k8scripts/database/03_postgres.yaml
+    kubectl apply -f $SCRIPT_DIR/pg.yaml
 
 }
 

@@ -1,24 +1,33 @@
 apiVersion: v1
-kind: ConfigMap
+kind: PersistentVolume
 metadata:
-  name: nginx-conf
-data:
-  nginx.conf: |
-    user nginx;
-    worker_processes  1;
-    events {
-      worker_connections  10240;
-    }
-    http {
-      server {
-          listen       80;
-          server_name  localhost;
-          location / {
-                proxy_pass      http://backendone-service:8080;
-              }
-      }
-    }
+  name: nginx-pv
+spec:
+  hostPath:
+    path: /Users/sachin/work/ws_skshukla/KubernetesSample/nginx/contents-runtime
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: manual
 
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-pvc
+spec:
+  volumeName: nginx-pv
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: manual
 
 ---
 
@@ -32,6 +41,8 @@ spec:
   type: NodePort
   ports:
     - port: 80
+      targetPort: 80
+      nodePort: 30002
       protocol: TCP
   selector:
     run: nginx
@@ -63,6 +74,8 @@ spec:
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
               readOnly: true
+            - name: static-content-vol
+              mountPath: /usr/share/nginx/html
       volumes:
         - name: nginx-conf
           configMap:
@@ -70,3 +83,7 @@ spec:
             items:
               - key: nginx.conf
                 path: nginx.conf
+        - name: static-content-vol
+          persistentVolumeClaim:
+            claimName: nginx-pvc
+

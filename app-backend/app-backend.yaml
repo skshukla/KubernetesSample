@@ -10,6 +10,8 @@ spec:
   ports:
     - port: 8080
       protocol: TCP
+      nodePort: 30003
+      name: tcp-backend
   selector:
     run: backend-app-one
 
