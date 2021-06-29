@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 
+# --------------------------------------------
+export POSTGRES_NODEPORT=30000
+# --------------------------------------------
+
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJ_DIR=$SCRIPT_DIR/..
 
-
+#source $PROJ_DIR/scripts/util.sh
 
 function runPostgres() {
     eval $(minikube docker-env)
@@ -15,8 +21,9 @@ function runPostgres() {
     kubectl delete pvc postgres-pvc || true;
     kubectl delete pv postgres-pv || true;
 
-    kubectl apply -f $SCRIPT_DIR/pg.yaml
+    $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/pg.yaml
 
 }
+
 
 runPostgres

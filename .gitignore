@@ -7,3 +7,5 @@ target/
 
 mvnw
 mvnw.cmd
+
+nginx/contents-runtime

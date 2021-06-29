@@ -90,6 +90,6 @@ spec:
     - name: node-port
       port: 5432
       targetPort: 5432
-      nodePort: 30001
+      nodePort: ${POSTGRES_NODEPORT}
   selector:
     app: postgres

@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+helpFunction()
+{
+   echo "Supported option is [-f] for file"
+   exit 1
+}
+
+while getopts "f:ar" opt
+do
+   case "$opt" in
+      f ) yamlFile="$OPTARG" ;;
+      a ) COMMAND_IS_APPLY="true" ;;
+      r ) COMMAND_IS_REPLACE="true" ;;
+      ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
+   esac
+done
+
+echo 'yaml file is : '$yamlFile
+
+if [[ "$yamlFile" == http* ]]; then
+CONTENT="$(curl -sSq $yamlFile)"
+YAML_CONTENT=$(echo "$CONTENT" | envsubst)
+else
+YAML_CONTENT=`eval "cat <<EOF
+$(<$yamlFile)
+EOF
+"`
+fi
+
+echo 'Final File Content is :=>'
+echo '------------------'
+echo "$YAML_CONTENT"
+
+
+if [[ "$COMMAND_IS_APPLY" == "true" ]]; then
+  COMMAND="apply"
+fi
+
+if [[ "$COMMAND_IS_REPLACE" == "true" ]]; then
+  COMMAND="replace"
+fi
+
+echo "$YAML_CONTENT" | kubectl $COMMAND -f -

@@ -4,7 +4,7 @@ metadata:
   name: nginx-pv
 spec:
   hostPath:
-    path: /Users/sachin/work/ws_skshukla/KubernetesSample/nginx/contents-runtime
+    path: ${RUNTIME_CONTENTS_DIR}
   capacity:
     storage: 1Gi
   volumeMode: Filesystem
@@ -42,7 +42,7 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30002
+      nodePort: ${NGINX_NODEPORT}
       protocol: TCP
   selector:
     run: nginx

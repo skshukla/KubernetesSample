@@ -28,7 +28,7 @@ spec:
     - name: zk-client
       port: 2181
       targetPort: 2181
-      nodePort: 30004
+      nodePort: ${ZK_NODEPORT}
   selector:
     app: zookeeper
 

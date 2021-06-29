@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 
+
+# --------------------------------------------
+export API_SERVICE_NODEPORT=30002
+# --------------------------------------------
+
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJ_DIR=$SCRIPT_DIR/..
 
-
-
-function getPortForService() {
-
-  http://vm-minikube:30003
-}
+#source $PROJ_DIR/scripts/util.sh
 
 
 function runApp() {
@@ -19,15 +20,10 @@ function runApp() {
 
     docker images
 
-    kubectl apply -f $SCRIPT_DIR/app-backend.yaml
+    $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/app-backend.yaml
 
-    /bin/sh -c "curl -w '\n' http://vm-minikube:30003/ip"
+    echo "curl -w '\n' http://vm-minikube:${API_SERVICE_NODEPORT}/ip"
 
 }
-
-#getPortForService nginx-service
-#getPortForService backendone-service
-#getPortForService postgres-service
-
 
 runApp
