@@ -10,10 +10,10 @@ function runPostgres() {
     kubectl delete service postgres-service || true;
     kubectl delete deployment postgres-deployment || true;
     kubectl delete configmap postgres-config || true;
-    kubectl patch pvc postgres-pv-claim -p '{"metadata":{"finalizers": []}}' --type=merge || true;
+    kubectl patch pvc postgres-pvc -p '{"metadata":{"finalizers": []}}' --type=merge || true;
     sleep 8
-    kubectl delete persistentvolumeclaims postgres-pv-claim || true;
-    kubectl delete persistentvolumes postgres-pv-volume || true;
+    kubectl delete pvc postgres-pvc || true;
+    kubectl delete pv postgres-pv || true;
 
     kubectl apply -f $SCRIPT_DIR/pg.yaml
 

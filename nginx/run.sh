@@ -21,7 +21,7 @@ function runNginx() {
     kubectl apply -f $SCRIPT_DIR/nginx.yaml
 
 
-    sleep 2
+    sleep 6
     cp -v -rf $SCRIPT_DIR/contents-src/* $SCRIPT_DIR/contents-runtime
 
 }

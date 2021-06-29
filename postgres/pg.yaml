@@ -12,7 +12,7 @@ data:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: postgres-pv-volume
+  name: postgres-pv
   labels:
     type: local
     app: postgres
@@ -30,10 +30,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pv-claim
+  name: postgres-pvc
   labels:
     app: postgres
 spec:
+  volumeName: postgres-pv
   storageClassName: manual
   accessModes:
     - ReadWriteMany
@@ -73,7 +74,7 @@ spec:
       volumes:
         - name: postgredb
           persistentVolumeClaim:
-            claimName: postgres-pv-claim
+            claimName: postgres-pvc
 
 ---
 

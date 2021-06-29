@@ -28,8 +28,12 @@ function runProject() {
     PROJ_NAME=nginx
     $PROJ_DIR/$PROJ_NAME/run.sh
 
+    PROJ_NAME=zookeeper
+    $PROJ_DIR/$PROJ_NAME/run.sh
 
     echo 'http://vm-minikube:30002'
+    echo 'curl -w '\n' http://vm-minikube:30002/api/ip'
+    sleep 3
     /bin/sh -c "curl -w '\n' http://vm-minikube:30002/api/ip"
 }
 
