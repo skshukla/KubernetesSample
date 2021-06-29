@@ -37,6 +37,7 @@ metadata:
   name: nginx-service
   labels:
     run: nginx-service
+    svc: nginx-svc
 spec:
   type: NodePort
   ports:
