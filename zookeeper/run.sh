@@ -2,7 +2,7 @@
 
 
 # --------------------------------------------
-export ZK_NODEPORT=30003
+export ZK_NODEPORT="${ZK_NODEPORT:-30003}"
 # --------------------------------------------
 
 
@@ -13,6 +13,11 @@ PROJ_DIR=$SCRIPT_DIR/..
 
 function runZK() {
     eval $(minikube docker-env)
+
+    kubectl delete statefulset zookeeper
+    kubectl delete svc zookeeper-headless zookeeper-service
+    kubectl delete pvc datadir-zookeeper-0 datadir-zookeeper-1 datadir-zookeeper-2
+
     $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/zk.yaml
 
 }

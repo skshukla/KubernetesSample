@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # --------------------------------------------
-export NGINX_NODEPORT=30001
 CONTAINER_RUNTIME_DIR_NAME=.contents-runtime
+export NGINX_NODEPORT="${NGINX_NODEPORT:-30001}"
 # --------------------------------------------
-
+echo 'NGINX_NODEPORT='$NGINX_NODEPORT
 
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

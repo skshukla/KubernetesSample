@@ -2,7 +2,7 @@
 
 
 # --------------------------------------------
-export API_SERVICE_NODEPORT=30002
+export API_SERVICE_NODEPORT="${API_SERVICE_NODEPORT:-30002}"
 # --------------------------------------------
 
 
@@ -13,8 +13,11 @@ PROJ_DIR=$SCRIPT_DIR/..
 
 
 function runApp() {
-
     eval $(minikube docker-env)
+
+    kubectl delete svc backendone-service || true;
+    kubectl delete deployment backend-app-one-deployment || true;
+
 
     $PROJ_DIR/BackendAppOne/scripts/run-docker.sh
 

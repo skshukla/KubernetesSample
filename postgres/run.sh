@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # --------------------------------------------
-export POSTGRES_NODEPORT=30000
+export POSTGRES_NODEPORT="${POSTGRES_NODEPORT:-30000}"
 # --------------------------------------------
 
 
