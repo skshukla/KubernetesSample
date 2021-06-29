@@ -2,6 +2,7 @@
 
 # --------------------------------------------
 export NGINX_NODEPORT=30001
+CONTAINER_RUNTIME_DIR_NAME=.contents-runtime
 # --------------------------------------------
 
 
@@ -11,7 +12,7 @@ PROJ_DIR=$SCRIPT_DIR/..
 
 #source $PROJ_DIR/scripts/util.sh
 
-export RUNTIME_CONTENTS_DIR=$SCRIPT_DIR/contents-runtime
+export RUNTIME_CONTENTS_DIR=$SCRIPT_DIR/$CONTAINER_RUNTIME_DIR_NAME
 
 function runNginx() {
     eval $(minikube docker-env)
