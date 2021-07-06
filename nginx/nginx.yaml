@@ -37,6 +37,7 @@ metadata:
   name: nginx-service
   labels:
     run: nginx-service
+    app: nginx
 spec:
   type: NodePort
   ports:
@@ -62,6 +63,7 @@ spec:
     metadata:
       labels:
         run: nginx
+        app: nginx
     spec:
       containers:
         - name: frontend
@@ -86,4 +88,3 @@ spec:
         - name: static-content-vol
           persistentVolumeClaim:
             claimName: nginx-pvc
-

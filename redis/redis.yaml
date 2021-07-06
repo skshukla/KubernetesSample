@@ -17,6 +17,9 @@ spec:
 
 ---
 
+#
+#---
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -37,14 +40,15 @@ spec:
 ---
 
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: redis-primary-deployment
+  name: redis-primary-statefulset
   labels:
     name: redis-primary
     app: redis
 spec:
   replicas: 1
+  serviceName: redis-primary-svc
   selector:
     matchLabels:
       name: redis-primary
@@ -56,26 +60,41 @@ spec:
     spec:
       subdomain: primary
       containers:
-        - name: redis
-          image: redis:3.2.0-alpine
-          command:
-            - "redis-server"
-          args:
-            - "--protected-mode"
-            - "no"
-          ports:
-            - containerPort: 6379
+      - name: redis
+        image: redis
+        command:
+        - "redis-server"
+        args:
+        - "--protected-mode"
+        - "no"
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: datadir
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+      labels:
+        app: redis
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 500Mi
 
 ---
 
+
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: redis-replica-deployment
+  name: redis-replica-statefulset
   labels:
     name: redis-replica
     app: redis
 spec:
+  serviceName: redis-replica-svc
   replicas: 2
   selector:
     matchLabels:
@@ -88,15 +107,28 @@ spec:
     spec:
       subdomain: replica
       containers:
-        - name: redis
-          image: redis:3.2.0-alpine
-          command:
-            - "redis-server"
-          args:
-            - "--slaveof"
-            - "redis-primary-svc"
-            - "6379"
-            - "--protected-mode"
-            - "no"
-          ports:
-            - containerPort: 6379
+      - name: redis
+        image: redis
+        command:
+        - "redis-server"
+        args:
+        - "--slaveof"
+        - "redis-primary-svc"
+        - "6379"
+        - "--protected-mode"
+        - "no"
+        volumeMounts:
+        - name: datadir
+          mountPath: /data
+        ports:
+        - containerPort: 6379
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+      labels:
+        app: redis
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 500Mi

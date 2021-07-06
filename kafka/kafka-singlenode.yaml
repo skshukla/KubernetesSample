@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kafka
+  name: kafka-0
+spec:
+  ports:
+    - port: 9092
+      protocol: TCP
+      targetPort: ${KAFKA_NODEPORT_0}
+      nodePort: ${KAFKA_NODEPORT_0}
+  selector:
+    app: kafka
+    run: kafka-0
+  type: NodePort
+status:
+  loadBalancer: {}
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka-d-0
+  labels:
+    app: kafka
+spec:
+  serviceName: kafka-0
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+      run: kafka-0
+  template:
+    metadata:
+      labels:
+        app: kafka
+        run: kafka-0
+    spec:
+      containers:
+        - name: kafka-container
+          image: 'bitnami/kafka:latest'
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: ${KAFKA_NODEPORT_0}
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /bitnami/kafka/data
+          env:
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "INTERNAL://:9092,EXTERNAL://${MINIKUBE_IP}:${KAFKA_NODEPORT_0}"
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: "zookeeper-service:2181/${zk_node}"
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+            - name: KAFKA_CFG_LISTENERS
+              value: "INTERNAL://:9092,EXTERNAL://:${KAFKA_NODEPORT_0}"
+            - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
+              value: "INTERNAL"
+  volumeClaimTemplates:
+    - metadata:
+        name: kafka-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi

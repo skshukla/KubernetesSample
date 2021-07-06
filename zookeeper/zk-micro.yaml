@@ -1,3 +1,5 @@
+# https://github.com/kow3ns/kubernetes-zookeeper/blob/master/manifests/zookeeper_micro.yaml
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,9 +15,7 @@ spec:
   clusterIP: None
   selector:
     app: zookeeper
-
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -31,9 +31,7 @@ spec:
       nodePort: ${ZK_NODEPORT}
   selector:
     app: zookeeper
-
 ---
-
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -43,10 +41,10 @@ spec:
     matchLabels:
       app: zookeeper
   serviceName: zookeeper-headless
-  replicas: 3
+  replicas: 1
+  podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
-  podManagementPolicy: OrderedReady
   template:
     metadata:
       labels:
@@ -55,11 +53,11 @@ spec:
       containers:
         - name: kubernetes-zookeeper
           imagePullPolicy: Always
-          image: "cloudurable/kube-zookeeper:0.0.1"
+          image: "gcr.io/google_containers/kubernetes-zookeeper:1.0-3.4.10"
           resources:
             requests:
-              memory: "400Mi"
-              cpu: "0.2"
+              memory: "500Mi"
+              cpu: "0.5"
           ports:
             - containerPort: 2181
               name: client
@@ -70,8 +68,8 @@ spec:
           command:
             - sh
             - -c
-            - "start.sh \
-          --servers=3 \
+            - "start-zookeeper \
+          --servers=1 \
           --data_dir=/var/lib/zookeeper/data \
           --data_log_dir=/var/lib/zookeeper/data/log \
           --conf_dir=/opt/zookeeper/conf \
@@ -93,7 +91,7 @@ spec:
               command:
                 - sh
                 - -c
-                - "ready_live.sh 2181"
+                - "zookeeper-ready 2181"
             initialDelaySeconds: 10
             timeoutSeconds: 5
           livenessProbe:
@@ -101,7 +99,7 @@ spec:
               command:
                 - sh
                 - -c
-                - "ready_live.sh 2181"
+                - "zookeeper-ready 2181"
             initialDelaySeconds: 10
             timeoutSeconds: 5
           volumeMounts:
@@ -117,4 +115,4 @@ spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: 500Mi
+            storage: 1Gi

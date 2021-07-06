@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 
-
-
 # --------------------------------------------
-export ZK_NODEPORT="${ZK_NODEPORT:-30003}"
+export KAFKA_NODEPORT="${KAFKA_NODEPORT:-30092}"
+export KAFKA_NODEPORT_0="${KAFKA_NODEPORT_0:-30092}"
+export KAFKA_NODEPORT_1="${KAFKA_NODEPORT_1:-30093}"
+export KAFKA_NODEPORT_2="${KAFKA_NODEPORT_2:-30094}"
 # --------------------------------------------
 
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJ_DIR=$SCRIPT_DIR/..
 
+source $PROJ_DIR/scripts/refreshMinikubeIP.sh
+MINIKUBE_IP=$(minikube ip)
+echo 'MINIKUBE_IP='$MINIKUBE_IP
+export MINIKUBE_IP="${MINIKUBE_IP}"
 
 
 START_WATCH="false"
@@ -29,34 +34,38 @@ function helpFunction() {
 
 function delete() {
     eval $(minikube docker-env)
-    kubectl delete statefulset zookeeper
-    kubectl delete svc zookeeper-headless zookeeper-service
-
-#    kubectl patch pvc datadir-zookeeper-0 '{"metadata":{"finalizers": []}}' --type=merge || true;
-#    kubectl patch pvc datadir-zookeeper-1 '{"metadata":{"finalizers": []}}' --type=merge || true;
-#    kubectl patch pvc datadir-zookeeper-2 '{"metadata":{"finalizers": []}}' --type=merge || true;
+    kubectl delete svc kafka-0 kafka-1 kafka-2 || true;
+    kubectl delete statefulset kafka-d-0 kafka-d-1 kafka-d-2
+#    kubectl patch pvc kafka-data-kafka-d-0-0 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
+#    kubectl patch pvc kafka-data-kafka-d-1-0 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
+#    kubectl patch pvc kafka-data-kafka-d-2-0 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
 #    sleep 8
-    kubectl delete pvc datadir-zookeeper-0 datadir-zookeeper-1 datadir-zookeeper-2
+    kubectl delete pvc kafka-data-kafka-d-0-0 kafka-data-kafka-d-1-0 kafka-data-kafka-d-2-0
 }
 
-function runZK() {
+function runKafka() {
     eval $(minikube docker-env)
 
+    export zk_node=n_$(date +%s)
+    echo 'Going to create the kafka cluster under node : '$zk_node
+
     if [[ "${RUN_AS_CLUSTER}" == "true" ]]; then
-            echo 'Going to run the application as clustered'
-            $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/zk.yaml
+            $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/kafka.yaml
         else
-            echo 'Going to run the application as stand-alone'
-            $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/zk-micro.yaml
+            $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/kafka-singlenode.yaml
     fi
 
-
+    echo 'Use below command for console producer and consumer once, ssh into the pod.
+    /opt/bitnami/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic asdf  \n
+    /opt/bitnami/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic asdf  --from-beginning
+    '
 }
+
+
 
 while getopts "cdfuw" opt
 do
    case "$opt" in
-      a ) COMMAND_IS_APPLY="true" ;;
       c ) RUN_AS_CLUSTER="true" ;;
       d ) DELETE_RESOURCES_ONLY="true" ;;
       f ) FORCE_CLEAN="true" ;;
@@ -82,13 +91,13 @@ fi
 
 if [[ "$FORCE_CLEAN" == "true" ]]; then
     delete
-    runZK
+    runKafka
 else
-    runZK
+    runKafka
 fi
 
 
 if [[ "$START_WATCH" == "true" ]]; then
-    watch_app zookeeper
+    watch_app kafka
 fi
 
