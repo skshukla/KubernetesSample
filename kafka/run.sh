@@ -4,7 +4,7 @@
 export KAFKA_NODEPORT="${KAFKA_NODEPORT:-30092}"
 export KAFKA_NODEPORT_0="${KAFKA_NODEPORT_0:-30092}"
 export KAFKA_NODEPORT_1="${KAFKA_NODEPORT_1:-30093}"
-export KAFKA_NODEPORT_2="${KAFKA_NODEPORT_2:-30094}"
+export KAFKA_NODEPORT_2="${KAFKA_NODEPORT_2:- }"
 # --------------------------------------------
 
 
@@ -27,7 +27,7 @@ function helpFunction() {
     echo 'Use [-c] option to run the application as clustered'
     echo 'Use [-d] option to delete only the resources and exit'
     echo 'Use [-f] option to delete and clean the resouces previously run (should be used for a fresh clean run)'
-    echo 'Use [-u] option to see the usage'
+    echo 'Use [-h] option to see the help'
     echo 'Use [-w] option to start watching the app at last'
     exit 0;
 }
@@ -36,10 +36,6 @@ function delete() {
     eval $(minikube docker-env)
     kubectl delete svc kafka-0 kafka-1 kafka-2 || true;
     kubectl delete statefulset kafka-d-0 kafka-d-1 kafka-d-2
-#    kubectl patch pvc kafka-data-kafka-d-0-0 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
-#    kubectl patch pvc kafka-data-kafka-d-1-0 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
-#    kubectl patch pvc kafka-data-kafka-d-2-0 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
-#    sleep 8
     kubectl delete pvc kafka-data-kafka-d-0-0 kafka-data-kafka-d-1-0 kafka-data-kafka-d-2-0
 }
 
@@ -63,14 +59,14 @@ function runKafka() {
 
 
 
-while getopts "cdfuw" opt
+while getopts "cdfhw" opt
 do
    case "$opt" in
       c ) RUN_AS_CLUSTER="true" ;;
       d ) DELETE_RESOURCES_ONLY="true" ;;
       f ) FORCE_CLEAN="true" ;;
       w ) START_WATCH="true" ;;
-      u ) helpFunction ;; # Usage
+      h ) helpFunction ;; # Usage
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -98,6 +94,6 @@ fi
 
 
 if [[ "$START_WATCH" == "true" ]]; then
-    watch_app kafka
+    $PROJ_DIR/scripts/watch_app kafka
 fi
 

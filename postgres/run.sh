@@ -20,7 +20,7 @@ FORCE_CLEAN="false"
 function helpFunction() {
     echo 'Use [-d] option to delete only the resources and exit'
     echo 'Use [-f] option to delete and clean the resouces previously run (should be used for a fresh clean run)'
-    echo 'Use [-u] option to see the usage'
+    echo 'Use [-h] option to see the usage'
     echo 'Use [-w] option to start watching the app at last'
     exit 0;
 }
@@ -45,14 +45,14 @@ function runPostgres() {
 }
 
 
-while getopts "cdfuw" opt
+while getopts "cdfhw" opt
 do
    case "$opt" in
       a ) COMMAND_IS_APPLY="true" ;;
       d ) DELETE_RESOURCES_ONLY="true" ;;
       f ) FORCE_CLEAN="true" ;;
       w ) START_WATCH="true" ;;
-      u ) helpFunction ;; # Usage
+      h ) helpFunction ;; # Usage
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -79,5 +79,5 @@ fi
 
 
 if [[ "$START_WATCH" == "true" ]]; then
-    watch_app postgres
+    $PROJ_DIR/scripts/watch_app postgres
 fi

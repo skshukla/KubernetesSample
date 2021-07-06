@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+APPS=$1
+SLEEP=$2
+
+if [[ -z "$APPS" ]]; then
+    echo 'No Apps passed. Exiting!!, valid arguments are kafka|zookeeper|postgres|nginx|redis'
+    exit 1
+fi
+
+CMD="watch \"kubectl get svc,deployments,statefulset,pods,pv,pvc -o wide --show-labels -l app=$APPS\" $2"
+echo $CMD
+/bin/sh -c "$CMD"
