@@ -27,6 +27,16 @@ function helpFunction() {
 
 function delete() {
     eval $(minikube docker-env)
+
+    NS=postgres
+#    kubectl -n $NS delete service postgres-service || true;
+#    kubectl -n $NS delete deployment postgres-deployment || true;
+#    kubectl -n $NS delete configmap postgres-config || true;
+    kubectl -n $NS patch pvc postgres-pvc -p '{"metadata":{"finalizers": []}}' --type=merge || true;
+    sleep 8
+    kubectl -n $NS delete pvc postgres-pvc || true;
+    kubectl -n $NS delete pv postgres-pv || true;
+
     kubectl delete ns postgres
 }
 

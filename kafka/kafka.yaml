@@ -109,6 +109,7 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: kafka-data
+        namespace: kafka
       spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:
@@ -162,6 +163,7 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: kafka-data
+        namespace: kafka
       spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:
@@ -215,6 +217,7 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: kafka-data
+        namespace: kafka
       spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:

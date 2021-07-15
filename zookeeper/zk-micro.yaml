@@ -114,6 +114,7 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: datadir
+        namespace: zookeeper
       spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:

@@ -78,6 +78,7 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: datadir
+      namespace: redis
       labels:
         app: redis
     spec:
@@ -129,6 +130,7 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: datadir
+      namespace: redis
       labels:
         app: redis
     spec:
