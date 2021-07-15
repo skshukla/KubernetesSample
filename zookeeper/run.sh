@@ -29,18 +29,12 @@ function helpFunction() {
 
 function delete() {
     eval $(minikube docker-env)
-    kubectl delete statefulset zookeeper
-    kubectl delete svc zookeeper-headless zookeeper-service
-
-#    kubectl patch pvc datadir-zookeeper-0 '{"metadata":{"finalizers": []}}' --type=merge || true;
-#    kubectl patch pvc datadir-zookeeper-1 '{"metadata":{"finalizers": []}}' --type=merge || true;
-#    kubectl patch pvc datadir-zookeeper-2 '{"metadata":{"finalizers": []}}' --type=merge || true;
-#    sleep 8
-    kubectl delete pvc datadir-zookeeper-0 datadir-zookeeper-1 datadir-zookeeper-2
+    kubectl delete ns zookeeper
 }
 
 function runZK() {
     eval $(minikube docker-env)
+    kubectl create ns zookeeper
 
     if [[ "${RUN_AS_CLUSTER}" == "true" ]]; then
             echo 'Going to run the application as clustered'
@@ -89,6 +83,6 @@ fi
 
 
 if [[ "$START_WATCH" == "true" ]]; then
-    $PROJ_DIR/scripts/watch_app zookeeper
+    watch "kubectl -n zookeeper get svc,deployments,statefulset,pods,pv,pvc -o wide --show-labels"
 fi
 

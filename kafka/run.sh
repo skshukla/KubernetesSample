@@ -4,7 +4,7 @@
 export KAFKA_NODEPORT="${KAFKA_NODEPORT:-30092}"
 export KAFKA_NODEPORT_0="${KAFKA_NODEPORT_0:-30092}"
 export KAFKA_NODEPORT_1="${KAFKA_NODEPORT_1:-30093}"
-export KAFKA_NODEPORT_2="${KAFKA_NODEPORT_2:- }"
+export KAFKA_NODEPORT_2="${KAFKA_NODEPORT_2:-30094}"
 # --------------------------------------------
 
 
@@ -34,14 +34,12 @@ function helpFunction() {
 
 function delete() {
     eval $(minikube docker-env)
-    kubectl delete svc kafka-0 kafka-1 kafka-2 || true;
-    kubectl delete statefulset kafka-d-0 kafka-d-1 kafka-d-2
-    kubectl delete pvc kafka-data-kafka-d-0-0 kafka-data-kafka-d-1-0 kafka-data-kafka-d-2-0
+    kubectl delete ns kafka
 }
 
 function runKafka() {
     eval $(minikube docker-env)
-
+    kubectl create ns kafka
     export zk_node=n_$(date +%s)
     echo 'Going to create the kafka cluster under node : '$zk_node
 
@@ -94,6 +92,6 @@ fi
 
 
 if [[ "$START_WATCH" == "true" ]]; then
-    $PROJ_DIR/scripts/watch_app kafka
+    watch "kubectl -n kafka get svc,deployments,statefulset,pods,pv,pvc -o wide --show-labels"
 fi
 

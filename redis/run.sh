@@ -27,23 +27,15 @@ function helpFunction() {
 
 function delete() {
     eval $(minikube docker-env)
-
-    kubectl delete svc redis-primary-svc redis-replica-svc
-    kubectl delete statefulset redis-primary-statefulset redis-replica-statefulset
-
-    kubectl patch pvc datadir-redis-primary-statefulset-0 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
-
-    kubectl patch pvc datadir-redis-replica-statefulset-0 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
-    kubectl patch pvc datadir-redis-replica-statefulset-1 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
-
-
-    kubectl delete pvc datadir-redis-primary-statefulset-0 datadir-redis-replica-statefulset-0 datadir-redis-replica-statefulset-1
+    kubectl delete ns redis
 }
 
 
 function runRedis() {
 
     eval $(minikube docker-env)
+
+    kubectl create ns redis
 
     $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/redis.yaml
 
@@ -93,5 +85,5 @@ fi
 
 
 if [[ "$START_WATCH" == "true" ]]; then
-    $PROJ_DIR/scripts/watch_app redis
+    watch "kubectl -n redis get svc,deployments,statefulset,pods,pv,pvc -o wide --show-labels"
 fi
