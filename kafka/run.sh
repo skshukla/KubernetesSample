@@ -35,6 +35,20 @@ function helpFunction() {
 function delete() {
     eval $(minikube docker-env)
     kubectl delete ns kafka
+
+
+    # Deleting Kafdrop services/deployments
+    kubectl delete svc kafdrop
+    kubectl delete deployment.apps/kafdrop
+}
+
+
+function runKafDrop() {
+    rm -rf /tmp/kafdrop && mkdir -p /tmp/kafdrop &&  cd /tmp/kafdrop && git clone https://github.com/obsidiandynamics/kafdrop && cd kafdrop
+    helm upgrade -i kafdrop chart --set image.tag=3.27.0 --set kafka.brokerConnect=${MINIKUBE_IP}:${KAFKA_NODEPORT_0} --set server.servlet.contextPath="/"  --set jvm.opts="-Xms32M -Xmx64M"
+    export NODE_PORT=$(kubectl get --namespace default -o jsonpath="{.spec.ports[0].nodePort}" services kafdrop)
+    export NODE_IP=$(kubectl get nodes --namespace default -o jsonpath="{.items[0].status.addresses[0].address}")
+    echo http://$NODE_IP:$NODE_PORT
 }
 
 function runKafka() {
@@ -53,6 +67,8 @@ function runKafka() {
     /opt/bitnami/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic asdf  \n
     /opt/bitnami/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic asdf  --from-beginning
     '
+
+    runKafDrop
 }
 
 
