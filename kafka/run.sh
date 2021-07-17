@@ -81,7 +81,7 @@ function runKafka() {
 
     runKafDrop
 
-    sleep 60
+    sleep 30
     createSampleTopics
 }
 
