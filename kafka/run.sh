@@ -15,6 +15,7 @@ source $PROJ_DIR/scripts/refreshMinikubeIP.sh
 MINIKUBE_IP=$(minikube ip)
 echo 'MINIKUBE_IP='$MINIKUBE_IP
 export MINIKUBE_IP="${MINIKUBE_IP}"
+export zk_node=n_$(date +%s)
 
 
 START_WATCH="false"
@@ -42,19 +43,28 @@ function delete() {
     kubectl delete deployment.apps/kafdrop
 }
 
+function createSampleTopics() {
+    echo 'going to create sample topics'
+    CMD="kubectl -n kafka exec -it pod/kafka-d-0-0 -- /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 3 --partitions 1 --topic t1-p1-r3"
+    echo "$CMD"
+    /bin/sh -c "$CMD"
+
+    CMD="kubectl -n kafka exec -it pod/kafka-d-0-0 -- /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 2 --partitions 3 --topic t1-p3-r2"
+    echo "$CMD"
+    /bin/sh -c "$CMD"
+}
 
 function runKafDrop() {
     rm -rf /tmp/kafdrop && mkdir -p /tmp/kafdrop &&  cd /tmp/kafdrop && git clone https://github.com/obsidiandynamics/kafdrop && cd kafdrop
     helm upgrade -i kafdrop chart --set image.tag=3.27.0 --set kafka.brokerConnect=${MINIKUBE_IP}:${KAFKA_NODEPORT_0} --set server.servlet.contextPath="/"  --set jvm.opts="-Xms32M -Xmx64M"
     export NODE_PORT=$(kubectl get --namespace default -o jsonpath="{.spec.ports[0].nodePort}" services kafdrop)
     export NODE_IP=$(kubectl get nodes --namespace default -o jsonpath="{.items[0].status.addresses[0].address}")
-    echo http://$NODE_IP:$NODE_PORT
+    echo "Access KafDrop at : http://$NODE_IP:$NODE_PORT"
 }
 
 function runKafka() {
     eval $(minikube docker-env)
     kubectl create ns kafka
-    export zk_node=n_$(date +%s)
     echo 'Going to create the kafka cluster under node : '$zk_node
 
     if [[ "${RUN_AS_CLUSTER}" == "true" ]]; then
@@ -66,9 +76,13 @@ function runKafka() {
     echo 'Use below command for console producer and consumer once, ssh into the pod.
     /opt/bitnami/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic asdf  \n
     /opt/bitnami/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic asdf  --from-beginning
+    Some useful commands: https://github.com/skshukla/infra/blob/dev/run_kafka/Readme.md
     '
 
     runKafDrop
+
+    sleep 60
+    createSampleTopics
 }
 
 
