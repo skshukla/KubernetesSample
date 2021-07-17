@@ -43,16 +43,16 @@ function delete() {
     kubectl delete deployment.apps/kafdrop
 }
 
-function createSampleTopics() {
-    echo 'going to create sample topics'
-    CMD="kubectl -n kafka exec -it pod/kafka-d-0-0 -- /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 3 --partitions 1 --topic t1-p1-r3"
-    echo "$CMD"
-    /bin/sh -c "$CMD"
-
-    CMD="kubectl -n kafka exec -it pod/kafka-d-0-0 -- /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 2 --partitions 3 --topic t1-p3-r2"
-    echo "$CMD"
-    /bin/sh -c "$CMD"
-}
+#function createSampleTopics() {
+#    echo 'going to create sample topics'
+#    CMD="kubectl -n kafka exec -it pod/kafka-d-0-0 -- /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 3 --partitions 1 --topic t1-p1-r3"
+#    echo "$CMD"
+#    /bin/sh -c "$CMD"
+#
+#    CMD="kubectl -n kafka exec -it pod/kafka-d-0-0 -- /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 2 --partitions 3 --topic t1-p3-r2"
+#    echo "$CMD"
+#    /bin/sh -c "$CMD"
+#}
 
 function runKafDrop() {
     rm -rf /tmp/kafdrop && mkdir -p /tmp/kafdrop &&  cd /tmp/kafdrop && git clone https://github.com/obsidiandynamics/kafdrop && cd kafdrop
@@ -80,9 +80,8 @@ function runKafka() {
     '
 
     runKafDrop
-
-    sleep 30
-    createSampleTopics
+#    sleep 30
+#    createSampleTopics
 }
 
 

@@ -50,6 +50,10 @@ spec:
           volumeMounts:
             - name: kafka-data
               mountPath: /bitnami/kafka/data
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 20 && /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 1 --partitions 1 --topic t-sn-02-p1-r1"]
           env:
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
               value: "INTERNAL://:9092,EXTERNAL://${MINIKUBE_IP}:${KAFKA_NODEPORT_0}"
