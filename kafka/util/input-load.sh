@@ -3,7 +3,8 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
-TOPIC=t-c-01-p3-r3
+#TOPIC=t-c-01-p3-r3
+TOPIC=t-c-01-p1-r3
 #TOPIC=t-sn-02-p1-r1
 
 KAFKA_HOME=~/softwares/kafka # Your local Kafka Home installation directory
