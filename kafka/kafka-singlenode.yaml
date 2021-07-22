@@ -53,7 +53,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "sleep 20 && /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 1 --partitions 1 --topic t-sn-02-p1-r1
+                command: ["/bin/sh", "-c", "sleep 10 && /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 1 --partitions 1 --topic t-sn-02-p1-r1
                 && /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 3 --partitions 1 --topic t-sn-01-p1-r3"]
           env:
             - name: KAFKA_CFG_ADVERTISED_LISTENERS

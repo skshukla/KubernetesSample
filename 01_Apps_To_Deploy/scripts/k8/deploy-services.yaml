@@ -1,0 +1,150 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: service-a-d
+  name: service-a
+  namespace: apps
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 30900
+  selector:
+    app: service-a-d
+  type: NodePort
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: service-a-d
+  name: service-a-d
+  namespace: apps
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: service-a-d
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: service-a-d
+    spec:
+      containers:
+        - image: service-a:v1
+          name: service-a
+          imagePullPolicy: IfNotPresent
+          resources: {}
+status: {}
+
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: service-b-d
+  name: service-b
+  namespace: apps
+spec:
+  ports:
+    - port: 8081
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 30901
+  selector:
+    app: service-b-d
+  type: NodePort
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: service-b-d
+  name: service-b-d
+  namespace: apps
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: service-b-d
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: service-b-d
+    spec:
+      containers:
+        - image: service-b:v1
+          name: service-b
+          imagePullPolicy: IfNotPresent
+          resources: {}
+status: {}
+
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: service-c-d
+  name: service-c
+  namespace: apps
+spec:
+  ports:
+    - port: 8082
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 30902
+  selector:
+    app: service-c-d
+  type: NodePort
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: service-c-d
+  name: service-c-d
+  namespace: apps
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: service-c-d
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: service-c-d
+    spec:
+      containers:
+        - image: service-c:v1
+          name: service-c
+          imagePullPolicy: IfNotPresent
+          resources: {}
+status: {}
