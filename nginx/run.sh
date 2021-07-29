@@ -40,6 +40,8 @@ function runNginx() {
 
     echo "curl -w '\n' http://vm-minikube:${NGINX_NODEPORT}"
 
+#    $PROJ_DIR/app-backend/run.sh
+
 }
 
 runNginx

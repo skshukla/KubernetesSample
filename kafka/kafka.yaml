@@ -204,8 +204,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "sleep 10 && /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 3 --partitions 3 --topic t-c-01-p3-r3 || true
-                && /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 3 --partitions 1 --topic t-c-01-p1-r3 || true"]
+                command: ["/bin/sh", "-c", "sleep 10 && /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 3 --partitions 1 --topic t-c-01-p1-r3 || true; && /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 3 --partitions 3 --topic t-c-01-p3-r3 || true;"]
           env:
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
               value: "INTERNAL://:9092,EXTERNAL://${MINIKUBE_IP}:${KAFKA_NODEPORT_2}"

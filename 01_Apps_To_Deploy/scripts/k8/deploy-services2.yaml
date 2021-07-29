@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: service-c-d
+  name: service-c-d
+  namespace: apps
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: service-c-d
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: service-c-d
+    spec:
+      containers:
+        - image: service-c:v1
+          name: service-c
+          imagePullPolicy: IfNotPresent
+          resources: {}
+status: {}
