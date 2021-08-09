@@ -13,6 +13,7 @@ PROJ_DIR=$SCRIPT_DIR/..
 #source $PROJ_DIR/scripts/util.sh
 
 export RUNTIME_CONTENTS_DIR=$SCRIPT_DIR/$CONTAINER_RUNTIME_DIR_NAME
+export NGINX_CONFIG_FILE_PATH=$SCRIPT_DIR/config/nginx.conf
 
 function runNginx() {
     eval $(minikube docker-env)
@@ -29,7 +30,7 @@ function runNginx() {
     kubectl delete persistentvolumes nginx-pv || true;
 
 
-    kubectl create cm nginx-conf --from-file=$SCRIPT_DIR/config/nginx.conf
+    kubectl create cm nginx-conf --from-file=$NGINX_CONFIG_FILE_PATH
 
 
     $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/nginx.yaml
@@ -41,6 +42,8 @@ function runNginx() {
     echo "curl -w '\n' http://vm-minikube:${NGINX_NODEPORT}"
 
 #    $PROJ_DIR/app-backend/run.sh
+
+    watch "kubectl get svc,deployments,statefulset,pods,pv,pvc -o wide --show-labels -l app=nginx"
 
 }
 
