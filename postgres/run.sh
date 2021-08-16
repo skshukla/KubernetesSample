@@ -37,12 +37,17 @@ function delete() {
     kubectl -n $NS delete pvc postgres-pvc || true;
     kubectl -n $NS delete pv postgres-pv || true;
 
+    # kubectl -n $NS delete cm pgsql-conf
     kubectl delete ns postgres
+    rm -rf /tmp/postgres && mkdir -p /tmp/postgres
 }
 
 function runPostgres() {
     eval $(minikube docker-env)
-    kubectl create ns postgres
+    NS=postgres
+    kubectl create ns $NS
+    kubectl -n $NS create cm postgresql-conf --from-file=$SCRIPT_DIR/conf/postgresql.conf
+    cp $SCRIPT_DIR/conf/postgresql.conf /tmp/postgres/postgresql.conf
     $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/pg.yaml
 
 }

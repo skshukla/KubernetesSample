@@ -67,6 +67,10 @@ spec:
         - name: postgres
           image: postgres:10.4
           imagePullPolicy: "IfNotPresent"
+          args:
+            - "postgres"
+            - "-c"
+            - "config_file=/tmp/postgresql.conf"
           ports:
             - containerPort: 5432
           envFrom:
@@ -75,10 +79,21 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgredb
+            - mountPath: /tmp/postgresql.conf
+              name: postgresql-conf
+              subPath: postgresql.conf
+              readOnly: false
       volumes:
         - name: postgredb
           persistentVolumeClaim:
             claimName: postgres-pvc
+        - name: postgresql-conf
+          configMap:
+            name: postgresql-conf
+            items:
+              - key: postgresql.conf
+                path: postgresql.conf
+
 
 ---
 
