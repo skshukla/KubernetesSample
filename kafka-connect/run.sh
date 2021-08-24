@@ -5,7 +5,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
 function runKafkaConnect() {
-
+  echo 'Consider converting it into Kubernetes instead of just docker!!'
   docker kill kafka-connect-container || true;
   docker rm kafka-connect-container || true;
   docker run --rm -d \
