@@ -36,9 +36,11 @@ function delete() {
     sleep 8
     kubectl -n $NS delete pvc postgres-pvc || true;
     kubectl -n $NS delete pv postgres-pv || true;
+    kubectl delete pv postgres-pv || true;
 
     # kubectl -n $NS delete cm pgsql-conf
     kubectl delete ns postgres
+    kubectl delete pv $(kubectl get pv | grep postgres | cut -d ' ' -f 1) || true;
     rm -rf /tmp/postgres && mkdir -p /tmp/postgres
 }
 

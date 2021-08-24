@@ -29,6 +29,7 @@ function helpFunction() {
 
 function delete() {
     eval $(minikube docker-env)
+    kubectl delete pv $(kubectl get pv | grep zoo | cut -d ' ' -f 1)
     kubectl delete ns zookeeper
 }
 

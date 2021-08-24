@@ -47,7 +47,7 @@ function helpFunction() {
 function delete() {
     eval $(minikube docker-env)
     kubectl delete ns kafka
-
+    kubectl delete pv $(kubectl get pv | grep kafka | cut -d ' ' -f 1)
     kubectl delete svc kafdrop
     kubectl delete deployment.apps/kafdrop
 }
