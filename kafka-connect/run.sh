@@ -18,21 +18,7 @@ function runKafkaConnect() {
   kubectl create ns $NS
   kubectl -n $NS create cm kafka-connect-cm --from-file=$SCRIPT_DIR/config/
 
-  kubectl -n $NS apply -f $SCRIPT_DIR/conf/kafka-connect-standalone.yaml
-
-#  echo 'Consider converting it into Kubernetes instead of just docker!!'
-#  docker kill kafka-connect-container || true;
-#  docker rm kafka-connect-container || true;
-#  docker run --rm -d \
-#    --name kafka-connect-container \
-#    -p 8081:8081 \
-#    -p 8082:8082 \
-#    -p 8083:8083 \
-#    -v $SCRIPT_DIR/config/connect-standalone.properties:/opt/bitnami/kafka/config/connect-standalone.properties \
-#    -v $SCRIPT_DIR/config/connect-file-source.properties:/opt/bitnami/kafka/config/connect-file-source.properties \
-#    -v $SCRIPT_DIR/data/test.txt:/tmp/test.txt \
-#    bitnami/kafka:latest /opt/bitnami/kafka/bin/connect-standalone.sh  /opt/bitnami/kafka/config/connect-standalone.properties /opt/bitnami/kafka/config/connect-file-source.properties
-
+  kubectl -n $NS apply -f $SCRIPT_DIR/k8/kafka-connect-standalone.yaml
 }
 
 runKafkaConnect
