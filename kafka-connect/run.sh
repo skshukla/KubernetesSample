@@ -5,15 +5,17 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
 function runKafkaConnect() {
+  echo '**** config/connect-standalone.properties file uses Kafka Broker details, MAKE SURE THAT IS CORRECT ****'
+  echo '****'
   export NS=kafka-connect
   kubectl delete ns $NS
   kubectl -n $NS delete cm kafka-connect-cm
 
-  kubectl -n $NS patch pvc kafka-connect-lib-standalone-pvc -p '{"metadata":{"finalizers": []}}' --type=merge || true;
+  kubectl -n $NS patch pvc kafka-connect-data-share-standalone-pvc -p '{"metadata":{"finalizers": []}}' --type=merge || true;
   sleep 8
-  kubectl -n $NS delete pvc kafka-connect-lib-standalone-pvc || true;
+  kubectl -n $NS delete pvc kafka-connect-data-share-standalone-pvc || true;
 
-  kubectl delete pv kafka-connect-lib-standalone-pv || true;
+  kubectl delete pv kafka-connect-data-share-standalone-pv || true;
 
   kubectl create ns $NS
   kubectl -n $NS create cm kafka-connect-cm --from-file=$SCRIPT_DIR/config/

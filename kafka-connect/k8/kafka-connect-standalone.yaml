@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: kafka-connect-lib-standalone-pv
+  name: kafka-connect-data-share-standalone-pv
   namespace: kafka-connect
 spec:
   capacity:
     storage: 1Gi
   volumeMode: Filesystem
   hostPath:
-    path: /Users/sachin/workspace/skshukla/KubernetesSample/kafka-connect/k8/lib
+    path: /Users/sachin/workspace/skshukla/KubernetesSample/kafka-connect/data-share
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
@@ -19,12 +19,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: kafka-connect-lib-standalone-pvc
+  name: kafka-connect-data-share-standalone-pvc
   namespace: kafka-connect
 spec:
   accessModes:
     - ReadWriteOnce
-  volumeName:  kafka-connect-lib-standalone-pv
+  volumeName:  kafka-connect-data-share-standalone-pv
   volumeMode: Filesystem
   resources:
     requests:
@@ -57,20 +57,10 @@ spec:
           command:
             - "/bin/sh"
             - "-c"
-            - "/opt/bitnami/kafka/bin/connect-standalone.sh /tmp/connect-standalone.properties /tmp/connect-file-source.properties"
+            - "/opt/bitnami/kafka/bin/connect-standalone.sh /tmp/data-share/config/connect-standalone.properties /tmp/data-share/config/connect-file-source.properties"
           volumeMounts:
-            - mountPath: /tmp/connect-standalone.properties
-              name: vol-kafka-connect-cm
-              subPath: connect-standalone.properties
-              readOnly: true
-            - mountPath: /tmp/connect-file-source.properties
-              name: vol-kafka-connect-cm
-              subPath: connect-file-source.properties
-              readOnly: true
-            - mountPath: /tmp/test.txt
-              name: vol-kafka-connect-cm
-              subPath: test.txt
-              readOnly: false
+            - mountPath: /tmp/data-share
+              name: vol-kafka-connect-data-share-standalone-pv
           ports:
             - name: p1
               containerPort: 8081
@@ -82,15 +72,6 @@ spec:
               containerPort: 8083
               protocol: "TCP"
       volumes:
-        - name: vol-kafka-connect-cm
-          configMap:
-            name: kafka-connect-cm
-            items:
-              - key: connect-standalone.properties
-                path: connect-standalone.properties
-              - key: connect-file-source.properties
-                path: connect-file-source.properties
-              - key: test.txt
-                path: test.txt
-
-
+        - name: vol-kafka-connect-data-share-standalone-pv
+          persistentVolumeClaim:
+            claimName: kafka-connect-data-share-standalone-pvc
