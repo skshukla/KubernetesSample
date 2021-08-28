@@ -49,7 +49,7 @@ function runPostgres() {
     NS=postgres
     kubectl create ns $NS
     kubectl -n $NS create cm postgresql-conf --from-file=$SCRIPT_DIR/conf/postgresql.conf
-    cp $SCRIPT_DIR/conf/postgresql.conf /tmp/postgres/postgresql.conf
+#    cp $SCRIPT_DIR/conf/postgresql.conf /tmp/postgres/postgresql.conf
     $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/pg.yaml
 
 }
