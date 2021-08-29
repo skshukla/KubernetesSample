@@ -2,28 +2,75 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+PROJ_DIR=$SCRIPT_DIR/..
 
+export NS=kafka-connect
+export DATA_SHARE_DIR=$SCRIPT_DIR/data-share
+
+START_WATCH="false"
+FORCE_CLEAN="false"
+RUN_AS_CLUSTER="false"
+
+
+function helpFunction() {
+    echo 'Use [-c] option to run the application as clustered'
+    echo 'Use [-d] option to delete only the resources and exit'
+    echo 'Use [-f] option to delete and clean the resouces previously run (should be used for a fresh clean run)'
+    echo 'Use [-h] option to see the help'
+    echo 'Use [-w] option to start watching the app at last'
+    exit 0;
+}
+
+
+function delete() {
+  kubectl delete ns $NS
+  kubectl -n $NS delete cm kafka-connect-cm
+  kubectl -n $NS patch pvc kafka-connect-data-share-standalone-pvc -p '{"metadata":{"finalizers": []}}' --type=merge || true;
+  sleep 8
+  kubectl -n $NS delete pvc kafka-connect-data-share-standalone-pvc || true;
+  kubectl delete pv kafka-connect-data-share-standalone-pv || true;
+}
 
 function runKafkaConnect() {
   echo '**** config/connect-standalone.properties file uses Kafka Broker details, MAKE SURE THAT IS CORRECT ****'
   echo '****'
-  export NS=kafka-connect
-  kubectl delete ns $NS
-  kubectl -n $NS delete cm kafka-connect-cm
-
-  kubectl -n $NS patch pvc kafka-connect-data-share-standalone-pvc -p '{"metadata":{"finalizers": []}}' --type=merge || true;
-  sleep 8
-  kubectl -n $NS delete pvc kafka-connect-data-share-standalone-pvc || true;
-
-  kubectl delete pv kafka-connect-data-share-standalone-pv || true;
-
   kubectl create ns $NS
   kubectl -n $NS create cm kafka-connect-cm --from-file=$SCRIPT_DIR/config/
 
-  kubectl -n $NS apply -f $SCRIPT_DIR/k8/kafka-connect-standalone.yaml
+  if [[ "${RUN_AS_CLUSTER}" == "true" ]]; then
+          echo 'Cluster setup is NOT supported at the moment!!!!'
+          exit 1;
+      else
+          $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/k8/kafka-connect-standalone.yaml
+  fi
+
 }
 
-runKafkaConnect
+
+while getopts "cdfhwx" opt
+do
+   case "$opt" in
+      c ) RUN_AS_CLUSTER="true" ;;
+      d ) (delete || true) && exit 0;;
+      f ) FORCE_CLEAN="true" ;;
+      w ) START_WATCH="true" ;;
+      h ) helpFunction && exit 0;; # Usage
+      ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
+   esac
+done
+
+if [[ "$FORCE_CLEAN" == "true" ]]; then
+    delete
+    runKafkaConnect
+else
+    runKafkaConnect
+fi
+
+
+if [[ "$START_WATCH" == "true" ]]; then
+    watch "kubectl -n $NS get svc,deployments,statefulset,pods,pv,pvc -o wide --show-labels"
+fi
+
 
 #function runJDBCConnector() {
 #

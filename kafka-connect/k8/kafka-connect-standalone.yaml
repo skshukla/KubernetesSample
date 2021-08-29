@@ -2,13 +2,13 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: kafka-connect-data-share-standalone-pv
-  namespace: kafka-connect
+  namespace: ${NS}
 spec:
   capacity:
     storage: 1Gi
   volumeMode: Filesystem
   hostPath:
-    path: /Users/sachin/workspace/skshukla/KubernetesSample/kafka-connect/data-share
+    path: ${DATA_SHARE_DIR}
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
@@ -20,7 +20,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: kafka-connect-data-share-standalone-pvc
-  namespace: kafka-connect
+  namespace: ${NS}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -40,7 +40,7 @@ metadata:
   labels:
     app: kafka-connect-sa-d
   name: kafka-connect-sa-d
-  namespace: kafka-connect
+  namespace: ${NS}
 spec:
   replicas: 1
   selector:
