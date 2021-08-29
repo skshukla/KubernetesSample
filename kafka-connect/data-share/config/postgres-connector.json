@@ -1,13 +1,20 @@
 {
-  "name": "jdbc_source_connector_postgresql_12",
+  "name": "jdbc_source_connector_postgresql_001",
   "config": {
     "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
     "connection.url": "jdbc:postgresql://192.168.99.106:30000/mydb",
     "connection.user": "sachin",
     "connection.password": "123456",
-    "topic.prefix": "psql12_",
+    "topic.prefix": "thesach001_",
     "poll.interval.ms" : 1000,
-    "mode":"incrementing",
-    "incrementing.column.name":"id"
+    "mode":"timestamp",
+    "table.whitelist" : "public.abcd",
+    "timestamp.column.name": "update_ts",
+    "validate.non.null": false,
+    "transforms":"createKey,extractInt",
+    "transforms.createKey.type":"org.apache.kafka.connect.transforms.ValueToKey",
+    "transforms.createKey.fields":"id",
+    "transforms.extractInt.type":"org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.extractInt.field":"id"
   }
 }

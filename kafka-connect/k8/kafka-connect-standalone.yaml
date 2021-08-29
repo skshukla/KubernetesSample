@@ -57,7 +57,7 @@ spec:
           command:
             - "/bin/sh"
             - "-c"
-            - "/opt/bitnami/kafka/bin/connect-standalone.sh /tmp/data-share/config/connect-standalone.properties /tmp/data-share/config/connect-file-source.properties"
+            - "cp -rf /tmp/data-share/lib/postgresql*.jar /opt/bitnami/kafka/libs/ && /opt/bitnami/kafka/bin/connect-standalone.sh /tmp/data-share/config/connect-standalone.properties /tmp/data-share/config/connect-file-source.properties"
           volumeMounts:
             - mountPath: /tmp/data-share
               name: vol-kafka-connect-data-share-standalone-pv
@@ -75,3 +75,33 @@ spec:
         - name: vol-kafka-connect-data-share-standalone-pv
           persistentVolumeClaim:
             claimName: kafka-connect-data-share-standalone-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kafka-connect-sa-d
+  name: kafka-connect-sa-d
+  namespace: kafka-connect
+spec:
+  ports:
+    - name: port-1
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+      nodePort: 30081
+    - name: port-2
+      port: 8082
+      protocol: TCP
+      targetPort: 8082
+      nodePort: 30082
+    - name: port-3
+      port: 8083
+      protocol: TCP
+      targetPort: 8083
+      nodePort: 30083
+  selector:
+    app: kafka-connect-sa-d
+  type: NodePort

@@ -17,10 +17,23 @@ function helpFunction() {
     echo 'Use [-d] option to delete only the resources and exit'
     echo 'Use [-f] option to delete and clean the resouces previously run (should be used for a fresh clean run)'
     echo 'Use [-h] option to see the help'
+    echo 'Use [-x] option to see extended help'
     echo 'Use [-w] option to start watching the app at last'
     exit 0;
 }
 
+
+function extendedHelp() {
+    echo "
+    [BROWSE CONNECTORS]: http://vm-minikube:30083/connectors
+    [BROWSE CONNECTOR PLUGINS]: http://vm-minikube:30083/connector-plugins
+    [APPLY CONNECTORS]: curl -d @$DATA_SHARE_DIR/config/postgres-connector.json \\
+                    -H 'Content-Type: application/json' \\
+                    -X POST http://vm-minikube:30083/connectors
+    [DELETE CONNECTORS]: curl -X DELETE http://vm-minikube:30083/connectors/<connector-name>
+    ------------------------------------------------------------------------------
+    "
+}
 
 function delete() {
   kubectl delete ns $NS
@@ -46,7 +59,7 @@ function runKafkaConnect() {
 
 }
 
-
+no_args="true"
 while getopts "cdfhwx" opt
 do
    case "$opt" in
@@ -54,10 +67,16 @@ do
       d ) (delete || true) && exit 0;;
       f ) FORCE_CLEAN="true" ;;
       w ) START_WATCH="true" ;;
+      x ) extendedHelp && exit 0 ;;
       h ) helpFunction && exit 0;; # Usage
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
+   no_args="false"
 done
+
+if [[ "$no_args" == "true" ]]; then
+  helpFunction && exit 1;
+fi
 
 if [[ "$FORCE_CLEAN" == "true" ]]; then
     delete
@@ -68,45 +87,7 @@ fi
 
 
 if [[ "$START_WATCH" == "true" ]]; then
-    watch "kubectl -n $NS get svc,deployments,statefulset,pods,pv,pvc -o wide --show-labels"
+    watch "kubectl -n $NS get svc,deployments,pods -o wide"
 fi
-
-
-#function runJDBCConnector() {
-#
-#  docker cp $SCRIPT_DIR/lib/kafka-connect-jdbc-*.jar kafka-connect-container:/opt/bitnami/kafka/libs
-#  docker cp $SCRIPT_DIR/lib/postgresql-*.jar kafka-connect-container:/opt/bitnami/kafka/libs
-#
-##  curl -X DELETE http://localhost:8083/connectors/jdbc_source_connector_postgresql_01
-#  docker restart kafka-connect-container
-#  echo 'Would execute the connector in few seconds.....'
-#  sleep 10
-#  echo 'Going to apply the connector.....'
-#  curl -d @"$SCRIPT_DIR/config/postgres-connector.json" \
-#    -H "Content-Type: application/json" \
-#    -X POST http://localhost:8083/connectors
-#}
-#
-#runKafkaConnect
-#
-#sleep 5
-#
-#runJDBCConnector
-##
-#echo 'http://localhost:8083/connector-plugins'
-#echo 'docker logs -f kafka-connect-container'
-
-
-#create table usr_tbl(
-#id int SERIAL PRIMARY KEY,
-#name varchar(100)
-#)
-#;
-#insert into usr_tbl values(1, 'name-1');
-#insert into usr_tbl values(2, 'name-2');
-#insert into usr_tbl values(4, 'name-4');
-#;
-#select * from public.usr_tbl
-#;
 
 
