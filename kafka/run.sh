@@ -44,6 +44,44 @@ function helpFunction() {
     exit 0;
 }
 
+
+function waitForZKToUpAndRunning {
+    source $PROJ_DIR/zookeeper/health.sh
+    if isZKStarted; then
+        echo 'ZK has already been started.'
+     else
+        echo 'Seems ZK has not been running, starting ZK Cluster.....'
+        echo '-----'
+        $PROJ_DIR/zookeeper/run.sh -cf
+    fi
+
+#     --------
+
+    echo 'Going to check the status of ZK health!!!!'
+    i=1
+    TIMEOUT=300
+    INTERVAL=10
+    ATTEMPT_COUNT=$(($TIMEOUT/$INTERVAL))
+    echo "TIMEOUT=$TIMEOUT, INTERVAL=$INTERVAL, ATTEMPT_COUNT=$ATTEMPT_COUNT"
+
+        while [ "$i" -le "$ATTEMPT_COUNT" ]; do
+            if [ "$ATTEMPT_COUNT" = "$i" ]; then
+                echo 'Reached Time Out!!!!'
+                exit 0;
+            fi
+
+            if isZKHealthy; then
+                echo 'ZK Node is healthy..'
+                return 0;
+            fi
+            echo '['$i'] - ZK not available yet, would be attempted again in '$INTERVAL' seconds'
+            sleep $INTERVAL
+            i=$(($i + 1))
+        done
+
+}
+
+
 function delete() {
     eval $(minikube docker-env)
     kubectl delete ns kafka
@@ -106,6 +144,7 @@ echo 'RUN_AS_CLUSTER: {'$RUN_AS_CLUSTER'}'
 
 if [[ "$FORCE_CLEAN" == "true" ]]; then
     delete
+    waitForZKToUpAndRunning
     runKafka
 else
     runKafka
