@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: keycloak
+  name: keycloak
+  namespace: ${NS}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - image: jboss/keycloak
+          name: keycloak
+          env:
+            - name: DB_ADDR
+              value: "${MINIKUBE_IP}:${POSTGRES_DB_PORT}"
+            - name: DB_DATABASE
+              value: "${POSTGRES_DB_NAME}"
+            - name: DB_PASSWORD
+              value: "${POSTGRES_DB_PASSWORD}"
+            - name: DB_USER
+              value: "${POSTGRES_DB_USER}"
+            - name: DB_VENDOR
+              value: POSTGRES
+            - name: KEYCLOAK_PASSWORD
+              value: admin123
+            - name: KEYCLOAK_USER
+              value: admin
+          ports:
+            - containerPort: 8080
+          resources: {}
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: keycloak
+  name: keycloak
+  namespace: ${NS}
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      nodePort: ${KEYCLOAK_NODEPORT}
+  selector:
+    app: keycloak
