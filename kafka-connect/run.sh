@@ -45,7 +45,7 @@ function delete() {
 }
 
 function runKafkaConnect() {
-  echo '**** config/connect-standalone.properties file uses Kafka Broker details, MAKE SURE THAT IS CORRECT ****'
+  echo '**** config/connect-standalone.properties file uses Kafka Broker details, MAKE SURE THAT IS CORRECT with right IP address value of vm-minikube ****'
   echo '****'
   kubectl create ns $NS
   kubectl -n $NS create cm kafka-connect-cm --from-file=$SCRIPT_DIR/config/

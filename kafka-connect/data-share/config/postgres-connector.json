@@ -1,14 +1,14 @@
 {
-  "name": "jdbc_source_connector_postgresql_001",
+  "name": "jdbc_source_connector_postgresql_007",
   "config": {
     "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
-    "connection.url": "jdbc:postgresql://192.168.99.106:30000/mydb",
+    "connection.url": "jdbc:postgresql://192.168.99.116:30000/mydb",
     "connection.user": "sachin",
     "connection.password": "123456",
-    "topic.prefix": "thesach001_",
+    "topic.prefix": "thesach007_",
     "poll.interval.ms" : 1000,
     "mode":"timestamp",
-    "table.whitelist" : "public.abcd",
+    "table.whitelist" : "public.kafka_connect_test_table",
     "timestamp.column.name": "update_ts",
     "validate.non.null": false,
     "transforms":"createKey,extractInt",
