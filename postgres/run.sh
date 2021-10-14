@@ -53,6 +53,7 @@ function runPostgres() {
     eval $(minikube docker-env)
     NS=postgres
     kubectl create ns $NS
+    docker pull postgres:10.4
     kubectl -n $NS create cm postgresql-conf --from-file=$SCRIPT_DIR/conf/postgresql.conf
 #    cp $SCRIPT_DIR/conf/postgresql.conf /tmp/postgres/postgresql.conf
     $PROJ_DIR/scripts/kubectl_advance -a -f  $SCRIPT_DIR/pg-entrypoint-volume.yaml
