@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kafka
+  name: kafka-0
+  namespace: kafka
+spec:
+  ports:
+    - port: 9092
+      name: p0
+      protocol: TCP
+      targetPort: 9092
+      nodePort: ${KAFKA_NODEPORT_0}
+    - port: 9093
+      name: p1
+      protocol: TCP
+      targetPort: 9093
+      nodePort: ${KAFKA_NODEPORT_SECURE_0}
+  selector:
+    app: kafka
+    run: kafka-0
+  type: NodePort
+status:
+  loadBalancer: {}
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka-d-0
+  namespace: kafka
+  labels:
+    app: kafka
+spec:
+  serviceName: kafka-0
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+      run: kafka-0
+  template:
+    metadata:
+      labels:
+        app: kafka
+        run: kafka-0
+    spec:
+      containers:
+        - name: kafka-container
+          image: 'bitnami/kafka:latest'
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 9092
+            - containerPort: 9093
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /bitnami/kafka/data
+            - name: my-hostpath-volume
+              mountPath: /bitnami/kafka/config/certs
+          env:
+            - name: KAFKA_CFG_LISTENERS
+              value: "INTERNAL://:9092,EXTERNAL://:${KAFKA_NODEPORT_0},EXTERNAL_SSL://:9093"
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "INTERNAL://:9092,EXTERNAL://${MINIKUBE_IP}:${KAFKA_NODEPORT_0},EXTERNAL_SSL://${MINIKUBE_IP}:${KAFKA_NODEPORT_SECURE_0}"
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL_SSL:SSL"
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: "zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node}"
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+            - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
+              value: "INTERNAL"
+            - name: KAFKA_CFG_SSL_KEYSTORE_LOCATION
+              value: "/bitnami/kafka/config/certs/kafka.keystore.jks"
+            - name: KAFKA_CFG_SSL_KEYSTORE_PASSWORD
+              value: "123456"
+            - name: KAFKA_CFG_SSL_TRUSTSTORE_LOCATION
+              value: "/bitnami/kafka/config/certs/kafka.truststore.jks"
+            - name: KAFKA_CFG_SSL_KEY_PASSWORD
+              value: "123456"
+            - name: KAFKA_CFG_SSL_TRUSTSTORE_PASSWORD
+              value: "123456"
+            - name: KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM
+              value: ""
+            - name: KAFKA_CFG_SSL_CLIENT_AUTH
+              value: "none"
+  volumeClaimTemplates:
+    - metadata:
+        name: kafka-data
+        namespace: kafka
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+    - metadata:
+        name: my-hostpath-volume
+      spec:
+        storageClassName: manual
+        accessModes: [ "ReadWriteMany" ]
+        resources:
+          requests:
+            storage: 200Mi
+        selector:
+          matchLabels:
+            type: local
+

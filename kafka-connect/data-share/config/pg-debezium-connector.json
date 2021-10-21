@@ -1,0 +1,15 @@
+{
+  "name": "my-test-connector",
+  "config": {
+    "plugin.name": "pgoutput",
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "vm-minikube",
+    "database.port": "30000",
+    "database.user": "sachin",
+    "database.password": "123456",
+    "database.dbname" : "mydb",
+    "database.server.name": "my-test",
+    "table.include.list": "public.kafka_connect_test_table"
+
+  }
+}

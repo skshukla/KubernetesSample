@@ -57,7 +57,7 @@ spec:
           command:
             - "/bin/sh"
             - "-c"
-            - "cp -rf /tmp/data-share/lib/postgresql*.jar /opt/bitnami/kafka/libs/ && /opt/bitnami/kafka/bin/connect-standalone.sh /tmp/data-share/config/connect-standalone.properties /tmp/data-share/config/connect-file-source.properties"
+            - "cp -rf /tmp/data-share/lib/postgresql*.jar /opt/bitnami/kafka/libs/ && cp -rf /tmp/data-share/lib/debezium-connector-postgres/*.jar /opt/bitnami/kafka/libs/ && /opt/bitnami/kafka/bin/connect-standalone.sh /tmp/data-share/config/connect-standalone.properties /tmp/data-share/config/connect-file-source.properties"
           volumeMounts:
             - mountPath: /tmp/data-share
               name: vol-kafka-connect-data-share-standalone-pv

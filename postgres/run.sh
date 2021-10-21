@@ -28,7 +28,7 @@ function helpFunction() {
 }
 
 function delete() {
-    eval $(minikube docker-env)
+     eval $(minikube docker-env)
 #    kubectl -n $NS delete service postgres-service || true;
 #    kubectl -n $NS delete deployment postgres-deployment || true;
 #    kubectl -n $NS delete configmap postgres-config || true;
@@ -50,7 +50,7 @@ function delete() {
 }
 
 function runPostgres() {
-    eval $(minikube docker-env)
+     eval $(minikube docker-env)
     NS=postgres
     kubectl create ns $NS
     docker pull postgres:10.4

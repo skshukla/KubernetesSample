@@ -1,20 +1,22 @@
 {
-  "name": "jdbc_source_connector_postgresql_007",
+  "name": "jdbc_source_connector_postgresql_002",
   "config": {
     "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
     "connection.url": "jdbc:postgresql://192.168.99.116:30000/mydb",
     "connection.user": "sachin",
     "connection.password": "123456",
-    "topic.prefix": "thesach007_",
+    "topic.prefix": "thesach_a_701_",
     "poll.interval.ms" : 1000,
     "mode":"timestamp",
     "table.whitelist" : "public.kafka_connect_test_table",
     "timestamp.column.name": "update_ts",
     "validate.non.null": false,
-    "transforms":"createKey,extractInt",
+    "transforms":"createKey,extractInt,replaceField",
     "transforms.createKey.type":"org.apache.kafka.connect.transforms.ValueToKey",
     "transforms.createKey.fields":"id",
     "transforms.extractInt.type":"org.apache.kafka.connect.transforms.ExtractField$Key",
-    "transforms.extractInt.field":"id"
+    "transforms.extractInt.field":"id",
+    "transforms.replaceField.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.replaceField.blacklist": "author,title"
   }
 }

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kafka-pv
+  namespace: kafka
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: ${KAFKA_VOL_LOC}
+
+#---
+#
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  name: kafka-pvc
+#  namespace: kafka
+#  labels:
+#    app: kafka
+#spec:
+#  volumeName: kafka-pv
+#  storageClassName: manual
+#  accessModes:
+#    - ReadWriteMany
+#  resources:
+#    requests:
+#      storage: 200Mi
