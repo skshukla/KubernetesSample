@@ -106,7 +106,7 @@ function waitForZKToUpAndRunning {
      else
         echo 'Seems ZK has not been running, starting ZK Cluster.....'
         echo '-----'
-        $PROJ_DIR/zookeeper/run.sh -cf
+        $PROJ_DIR/zookeeper/run.sh -f
     fi
 
 #     --------
