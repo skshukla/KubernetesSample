@@ -1,5 +1,20 @@
 # https://github.com/kow3ns/kubernetes-zookeeper/blob/master/manifests/zookeeper_micro.yaml
----
+
+#apiVersion: v1
+#kind: PersistentVolume
+#metadata:
+#  name: zk-micro-vol-0
+#  namespace: zookeeper
+#spec:
+#  capacity:
+#    storage: 500Mi
+#  accessModes:
+#    - ReadWriteOnce
+#  persistentVolumeReclaimPolicy: Retain
+#  hostPath:
+#    path: /tmp/zk-micro-vol-0
+#
+#---
 apiVersion: v1
 kind: Service
 metadata:
@@ -108,15 +123,18 @@ spec:
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/zookeeper
+      volumes:
+      - name: datadir
+        emptyDir: {}
       securityContext:
         runAsUser: 1000
         fsGroup: 1000
-  volumeClaimTemplates:
-    - metadata:
-        name: datadir
-        namespace: zookeeper
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: datadir
+#        namespace: zookeeper
+#      spec:
+#        accessModes: [ "ReadWriteOnce" ]
+#        resources:
+#          requests:
+#            storage: 500Mi

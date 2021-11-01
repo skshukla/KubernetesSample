@@ -28,13 +28,18 @@ function helpFunction() {
 }
 
 function delete() {
-    eval $(minikube docker-env)
+#    eval $(minikube docker-env)
+    NS=zookeeper
+    kubectl -n $NS patch pvc datadir-zookeeper-0 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
+    kubectl -n $NS patch pvc datadir-zookeeper-1 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
+    kubectl -n $NS patch pvc datadir-zookeeper-2 -p '{"metadata":{"finalizers": []}}' --type=merge || true;
+    kubectl -n $NS delete pvc datadir-zookeeper-0 delete pvc datadir-zookeeper-1 delete pvc datadir-zookeeper-2 || true;
     kubectl delete pv $(kubectl get pv | grep zoo | cut -d ' ' -f 1)
-    kubectl delete ns zookeeper
+    kubectl delete ns $NS
 }
 
 function runZK() {
-    eval $(minikube docker-env)
+#    eval $(minikube docker-env)
     kubectl create ns zookeeper
 
     if [[ "${RUN_AS_CLUSTER}" == "true" ]]; then

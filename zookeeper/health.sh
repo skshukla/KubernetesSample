@@ -6,7 +6,7 @@ export NSZK=zookeeper
 
 # ----
 
-eval $(minikube docker-env)
+#eval $(minikube docker-env)
 
 # ----
 
@@ -26,7 +26,7 @@ function isZKStarted() {
 
 function isZKHealthy() {
     nodeVal=$1
-    NODE_VAL="${nodeVal:-2}"
+    NODE_VAL="${nodeVal:-0}"
     CMD="kubectl -n $NSZK get pod zookeeper-$NODE_VAL | tail -1 | cut -d ' ' -f 4 | cut -d '/' -f 1"
     STATUS=$(/bin/sh -c "$CMD")
     echo 'CMD='$CMD

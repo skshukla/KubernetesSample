@@ -8,4 +8,8 @@ target/
 mvnw
 mvnw.cmd
 
+.gradle
+kafka/kafka-data-host/**/*.jks
+kafka/kafka-data-host/**/*.crt
+
 nginx/.contents-runtime

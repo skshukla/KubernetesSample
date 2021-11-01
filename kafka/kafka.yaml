@@ -106,15 +106,18 @@ spec:
               value: "INTERNAL://:9092,EXTERNAL://:${KAFKA_NODEPORT_0}"
             - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
               value: "INTERNAL"
-  volumeClaimTemplates:
-    - metadata:
-        name: kafka-data
-        namespace: kafka
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
+      volumes:
+        - name: kafka-data
+          emptyDir: { }
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: kafka-data
+#        namespace: kafka
+#      spec:
+#        accessModes: [ "ReadWriteOnce" ]
+#        resources:
+#          requests:
+#            storage: 1Gi
 
 ---
 
@@ -160,15 +163,18 @@ spec:
               value: "INTERNAL://:9092,EXTERNAL://:${KAFKA_NODEPORT_1}"
             - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
               value: "INTERNAL"
-  volumeClaimTemplates:
-    - metadata:
-        name: kafka-data
-        namespace: kafka
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
+      volumes:
+        - name: kafka-data
+          emptyDir: { }
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: kafka-data
+#        namespace: kafka
+#      spec:
+#        accessModes: [ "ReadWriteOnce" ]
+#        resources:
+#          requests:
+#            storage: 1Gi
 
 ---
 
@@ -218,12 +224,15 @@ spec:
               value: "INTERNAL://:9092,EXTERNAL://:${KAFKA_NODEPORT_2}"
             - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
               value: "INTERNAL"
-  volumeClaimTemplates:
-    - metadata:
-        name: kafka-data
-        namespace: kafka
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
+      volumes:
+      - name: kafka-data
+        emptyDir: { }
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: kafka-data
+#        namespace: kafka
+#      spec:
+#        accessModes: [ "ReadWriteOnce" ]
+#        resources:
+#          requests:
+#            storage: 1Gi

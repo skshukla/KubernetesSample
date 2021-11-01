@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # --------------------------------------------
+export KUBE_MASTER_IP=192.168.10.101
 export KAFKA_NODEPORT_0="${KAFKA_NODEPORT_0:-30092}"
 export KAFKA_NODEPORT_SECURE_0="${KAFKA_NODEPORT_SECURE_0:-30192}"
 export KAFKA_NODEPORT_1="${KAFKA_NODEPORT_1:-30093}"
@@ -136,7 +137,7 @@ function waitForZKToUpAndRunning {
 
 
 function delete() {
-    eval $(minikube docker-env)
+#    eval $(minikube docker-env)
     kubectl -n kafka delete statefulset.apps/kafka-d-0 service/kafka-0 persistentvolumeclaim/kafka-data-kafka-d-0-0 persistentvolumeclaim/my-hostpath-volume-kafka-d-0-0
     kubectl delete pv kafka-pv || true;
     kubectl delete ns kafka
@@ -147,14 +148,19 @@ function delete() {
 
 function runKafDrop() {
     rm -rf /tmp/kafdrop && mkdir -p /tmp/kafdrop &&  cd /tmp/kafdrop && git clone https://github.com/obsidiandynamics/kafdrop && cd kafdrop
-    helm upgrade -i kafdrop chart --set image.tag=3.27.0 --set kafka.brokerConnect=${MINIKUBE_IP}:${KAFKA_NODEPORT_SECURE_0} --set server.servlet.contextPath="/"  --set jvm.opts="-Xms32M -Xmx64M"
+    KAFDROP_BROKER_CONNECT_STR="${KUBE_MASTER_IP}:${KAFKA_NODEPORT_0}"
+#    if [[ "${RUN_AS_CLUSTER}" == "true" ]]; then
+#      KAFDROP_BROKER_CONNECT_STR="${KUBE_MASTER_IP}:${KAFKA_NODEPORT_0},${KUBE_MASTER_IP}:${KAFKA_NODEPORT_1},${KUBE_MASTER_IP}:${KAFKA_NODEPORT_2}"
+#    fi
+    echo 'KAFDROP_BROKER_CONNECT_STR='$KAFDROP_BROKER_CONNECT_STR
+    helm upgrade -i kafdrop chart --set image.tag=3.27.0 --set kafka.brokerConnect="${KAFDROP_BROKER_CONNECT_STR}" --set server.servlet.contextPath="/"  --set jvm.opts="-Xms32M -Xmx64M"
     export NODE_PORT=$(kubectl get --namespace default -o jsonpath="{.spec.ports[0].nodePort}" services kafdrop)
     export NODE_IP=$(kubectl get nodes --namespace default -o jsonpath="{.items[0].status.addresses[0].address}")
     echo "Access KafDrop at : http://$NODE_IP:$NODE_PORT"
 }
 
 function runKafka() {
-    eval $(minikube docker-env)
+#    eval $(minikube docker-env)
     kubectl create ns kafka
     echo 'Going to create the kafka cluster under node : '$zk_node
 
