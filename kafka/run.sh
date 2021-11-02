@@ -73,11 +73,12 @@ function kafkaCommandsHelp() {
     ------------------------------------------------------------------------------
     kubectl -n kafka exec -it kafka-d-0-0 -- /bin/sh
     ---
-    /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 1 --partitions 3 --topic mytopic-01
-    /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 3 --partitions 3 --topic my-compacted-topic-01 --config cleanup.policy=compact  --config min.cleanable.dirty.ratio=0.01  --config segment.ms=100 --config delete.retention.ms=100
-    /opt/bitnami/kafka/bin/kafka-topics.sh --describe --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --topic t-c-01-p1-r3
-    /opt/bitnami/kafka/bin/kafka-topics.sh --list --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node}
-    /opt/bitnami/kafka/bin/kafka-topics.sh --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --alter --topic t-c-01-p1-r3 --partitions 16
+    /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka-0.kafka.svc.cluster.local:9092,kafka-1.kafka.svc.cluster.local:9093,kafka-2.kafka.svc.cluster.local:9094 --replication-factor 1 --partitions 3 --topic mytopic-01
+    /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka-0.kafka.svc.cluster.local:9092,kafka-1.kafka.svc.cluster.local:9093,kafka-2.kafka.svc.cluster.local:9094 --replication-factor 3 --partitions 3 --topic my-compacted-topic-01
+    /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka-0.kafka.svc.cluster.local:9092,kafka-1.kafka.svc.cluster.local:9093,kafka-2.kafka.svc.cluster.local:9094 --replication-factor 3 --partitions 3 --topic my-compacted-topic-01-compacted --config cleanup.policy=compact  --config min.cleanable.dirty.ratio=0.01  --config segment.ms=100 --config delete.retention.ms=100
+    /opt/bitnami/kafka/bin/kafka-topics.sh --describe --bootstrap-server kafka-0.kafka.svc.cluster.local:9092,kafka-1.kafka.svc.cluster.local:9093,kafka-2.kafka.svc.cluster.local:9094 --topic t-c-01-p1-r3
+    /opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server kafka-0.kafka.svc.cluster.local:9092,kafka-1.kafka.svc.cluster.local:9093,kafka-2.kafka.svc.cluster.local:9094
+    /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka-0.kafka.svc.cluster.local:9092,kafka-1.kafka.svc.cluster.local:9093,kafka-2.kafka.svc.cluster.local:9094 --alter --topic t-c-01-p1-r3 --partitions 16
     /opt/bitnami/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic t-c-01-p1-r3
     /opt/bitnami/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic t-c-01-p1-r3  --from-beginning
     /opt/bitnami/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic t-c-01-p1-r3  --from-beginning --property print.key=true --property key.separator=" : "
