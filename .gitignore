@@ -9,7 +9,7 @@ mvnw
 mvnw.cmd
 
 .gradle
-kafka/kafka-data-host/**/*.jks
-kafka/kafka-data-host/**/*.crt
+**/*.jks
+**/*.crt
 
 nginx/.contents-runtime
