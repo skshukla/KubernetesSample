@@ -3,7 +3,7 @@
   "config": {
     "plugin.name": "pgoutput",
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-    "database.hostname": "vm-minikube",
+    "database.hostname": "vm-kube-master-1",
     "database.port": "30000",
     "database.user": "sachin",
     "database.password": "123456",

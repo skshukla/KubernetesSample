@@ -13,7 +13,7 @@ function freshcreateDummyTableAndData() {
     -e PGPASSWORD=123456 \
     -v $SCRIPT_DIR/sql:/tmp/sql \
     postgres:10.4 \
-    psql -h 192.168.99.106 -p 30000 --user sachin --db mydb -f /tmp/sql/$SQL_FILE_TO_EXECUTE
+    psql -h vm-kube-master-1 -p 30000 --user sachin --db mydb -f /tmp/sql/$SQL_FILE_TO_EXECUTE
 
 }
 

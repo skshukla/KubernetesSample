@@ -2,10 +2,13 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+V_HOME_DIR="/home/sachin"
+V_PROJ_DIR=$V_HOME_DIR/KubernetesSample/kafka-connect
+
 PROJ_DIR=$SCRIPT_DIR/..
 
 export NS=kafka-connect
-export DATA_SHARE_DIR=$SCRIPT_DIR/data-share
+export DATA_SHARE_DIR=$V_PROJ_DIR/data-share
 
 START_WATCH="false"
 FORCE_CLEAN="false"
@@ -25,23 +28,23 @@ function helpFunction() {
 
 function extendedHelp() {
     echo "
-    [BROWSE CONNECTORS]: http://vm-minikube:30083/connectors
-    [BROWSE CONNECTOR PLUGINS]: http://vm-minikube:30083/connector-plugins
-    [APPLY CONNECTORS]: curl -d @$DATA_SHARE_DIR/config/postgres-connector.json \\
+    [BROWSE CONNECTORS]: http://vm-kube-master-1:30083/connectors
+    [BROWSE CONNECTOR PLUGINS]: http://vm-kube-master-1:30083/connector-plugins
+    [APPLY CONNECTORS]: curl -d @${SCRIPT_DIR}/data-share/config/postgres-connector.json \\
                     -H 'Content-Type: application/json' \\
-                    -X POST http://vm-minikube:30083/connectors
-    [DELETE CONNECTORS]: curl -X DELETE http://vm-minikube:30083/connectors/<connector-name>
+                    -X POST http://vm-kube-master-1:30083/connectors
+    [DELETE CONNECTORS]: curl -X DELETE http://vm-kube-master-1:30083/connectors/<connector-name>
     ------------------------------------------------------------------------------
     "
 }
 
 function delete() {
-  kubectl delete ns $NS
-  kubectl -n $NS delete cm kafka-connect-cm
   kubectl -n $NS patch pvc kafka-connect-data-share-standalone-pvc -p '{"metadata":{"finalizers": []}}' --type=merge || true;
   sleep 8
   kubectl -n $NS delete pvc kafka-connect-data-share-standalone-pvc || true;
   kubectl delete pv kafka-connect-data-share-standalone-pv || true;
+  kubectl -n $NS delete cm kafka-connect-cm
+  kubectl delete ns $NS
 }
 
 function runKafkaConnect() {
