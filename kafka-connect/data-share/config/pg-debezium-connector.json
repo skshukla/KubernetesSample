@@ -3,12 +3,12 @@
   "config": {
     "plugin.name": "pgoutput",
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-    "database.hostname": "vm-kube-master-1",
+    "database.hostname": "kube0",
     "database.port": "30000",
     "database.user": "sachin",
     "database.password": "123456",
     "database.dbname" : "mydb",
-    "database.server.name": "my-test",
+    "database.server.name": "my-test2",
     "table.include.list": "public.kafka_connect_test_table"
 
   }

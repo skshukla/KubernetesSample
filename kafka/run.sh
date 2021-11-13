@@ -13,6 +13,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJ_DIR=$SCRIPT_DIR/..
 
 export KAFKA_VOL_LOC=${SCRIPT_DIR}/kafka-data-host/data
+export zk_node=n_$(date +%s)
+echo ${zk_node}>~/.zk_node
 
 START_WATCH="false"
 FORCE_CLEAN="false"
@@ -156,8 +158,7 @@ function runKafDrop() {
     echo 'KAFDROP_BROKER_CONNECT_STR='$KAFDROP_BROKER_CONNECT_STR
     helm upgrade -i kafdrop chart --set image.tag=3.27.0 --set kafka.brokerConnect="${KAFDROP_BROKER_CONNECT_STR}" --set server.servlet.contextPath="/"  --set jvm.opts="-Xms32M -Xmx64M"
     export NODE_PORT=$(kubectl get --namespace default -o jsonpath="{.spec.ports[0].nodePort}" services kafdrop)
-    export NODE_IP=$(kubectl get nodes --namespace default -o jsonpath="{.items[0].status.addresses[0].address}")
-    echo "Access KafDrop at : http://$NODE_IP:$NODE_PORT"
+    echo "Access KafDrop at : http://kube0:$NODE_PORT"
 }
 
 function runKafka() {
@@ -202,19 +203,13 @@ do
 done
 
 
-source $PROJ_DIR/scripts/refreshMinikubeIP.sh
-MINIKUBE_IP=$(minikube ip)
-echo 'MINIKUBE_IP='$MINIKUBE_IP
-export MINIKUBE_IP="${MINIKUBE_IP}"
-export zk_node=n_$(date +%s)
+
 
 # ------------------------------------------------------------
 
 echo 'START_WATCH: {'$START_WATCH'}'
 echo 'FORCE_CLEAN: {'$FORCE_CLEAN'}'
 echo 'RUN_AS_CLUSTER: {'$RUN_AS_CLUSTER'}'
-
-
 
 if [[ "$FORCE_CLEAN" == "true" ]]; then
     delete

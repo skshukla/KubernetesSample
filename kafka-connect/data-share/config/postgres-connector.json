@@ -2,7 +2,7 @@
   "name": "jdbc_source_connector_postgresql_002",
   "config": {
     "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
-    "connection.url": "jdbc:postgresql://vm-kube-master-1:30000/mydb",
+    "connection.url": "jdbc:postgresql://kube0:30000/mydb",
     "connection.user": "sachin",
     "connection.password": "123456",
     "topic.prefix": "thesach_a_701_",

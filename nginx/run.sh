@@ -32,7 +32,7 @@ function createNginx() {
       $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/nginx.yaml
       sleep 6
 #    $PROJ_DIR/app-backend/run.sh
-      echo "curl -w '\n' http://vm-kube-master-1:${NGINX_NODEPORT}"
+      echo "curl -w '\n' http://kube0:${NGINX_NODEPORT}"
 }
 
 function runNginx() {
