@@ -64,12 +64,12 @@ function runVault() {
 
   *****************************************************************************************
   Issue this command to see some basic logs and for token details.
+  { kubectl -n $NS exec -it pod/vault-0 -- cat /tmp/log.out }
   Ideally Root token logs to be deleted and token needs to be revoked once there are other auth mechanism.
-  \"kubectl -n $NS exec -it pod/vault-0 -- cat /tmp/log.out\"
   If all goes good, you can login to Vault at http://kube0:${VAULT_NODE_PORT} with credentials as admin/admin123.....
   *****************************************************************************************
-  "
 
+  "
 }
 
 no_args="true"
