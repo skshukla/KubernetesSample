@@ -31,13 +31,15 @@ function helpFunction() {
 
 function extendedHelp() {
     echo "
-    NEED TO WRITE
+    To login with a token { vault login <TOKEN> }
+    To login by with a user: { vault login -method=userpass username=admin }
     ------------------------------------------------------------------------------
     "
 }
 
 function delete() {
   kubectl delete clusterrolebinding vault-server-binding
+  kubectl -n $NS delete statefulsets vault
 
   kubectl -n $NS patch pvc vault-pvc -p '{"metadata":{"finalizers": []}}' --type=merge || true;
   sleep 8
@@ -66,7 +68,7 @@ function runVault() {
   Issue this command to see some basic logs and for token details.
   { kubectl -n $NS exec -it pod/vault-0 -- cat /tmp/log.out }
   Ideally Root token logs to be deleted and token needs to be revoked once there are other auth mechanism.
-  If all goes good, you can login to Vault at http://kube0:${VAULT_NODE_PORT} with credentials as admin/admin123.....
+  If all goes good, you can login to Vault at { http://kube0:${VAULT_NODE_PORT} } with credentials as admin/admin123.....
   *****************************************************************************************
 
   "
