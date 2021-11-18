@@ -39,7 +39,7 @@ function extendedHelp() {
 
 function delete() {
   kubectl delete clusterrolebinding vault-server-binding
-  kubectl -n $NS delete statefulsets vault
+  kubectl -n $NS delete all -l app.kubernetes.io/name=vault
 
   kubectl -n $NS patch pvc vault-pvc -p '{"metadata":{"finalizers": []}}' --type=merge || true;
   sleep 8
