@@ -31,6 +31,24 @@ function helpFunction() {
 
 function extendedHelp() {
     echo "
+    To create policy from file { vault policy write sample-policy sample.hcl }
+    To List policy { vault policy list }
+
+    To enable [username/password] authentication { vault auth enable userpass }
+    To enable [username/password] authentication with custom path { vault auth enable -path=myuserpass userpass }
+    To enable [approle] authentication { vault auth enable -path=myapprole approle }
+    To List all enabled auth mechanism { vault auth list }
+
+    To create a user and attach a policy { vault write auth/userpass/users/user0 password="123456" policies=sample-policy }
+    To create a user and attach a policy (created on a custom path) { vault write auth/myuserpass/users/user1 password="123456" policies=sample-policy }
+    To login with a user (created on a custom path) { vault login -method=userpass -path=myuserpass username=user1 }
+
+
+    To enable [kv] secrets engine { vault secrets enable -path=mykv kv }
+    To enable [database] secrets engine { vault secrets enable -path=mydatabase database }
+    To enable [aws] secrets engine { vault secrets enable -path=myaws aws }
+    To List all enabled secret engines mechanism { vault secrets list }
+
     To login with a token { vault login <TOKEN> }
     To login by with a user: { vault login -method=userpass username=admin }
     ------------------------------------------------------------------------------
@@ -65,13 +83,16 @@ function runVault() {
   echo "
 
   *****************************************************************************************
-  Issue this command to see some basic logs and for token details.
+  Issue this command to see some basic logs and for ROOT token details.
   { kubectl -n $NS exec -it pod/vault-0 -- cat /tmp/log.out }
   Ideally Root token logs to be deleted and token needs to be revoked once there are other auth mechanism.
-  If all goes good, you can login to Vault at { http://kube0:${VAULT_NODE_PORT} } with credentials as admin/admin123.....
+  If all goes good, you can login to Vault at { http://kube0:${VAULT_NODE_PORT} } with credentials as admin/admin123....
+  To Obtain token for admin user, issue command {  vault login -method=userpass username=admin } and then enter password {admin123}.
   *****************************************************************************************
 
   "
+  sleep 8
+  open -a "Google Chrome" "http://kube0:${VAULT_NODE_PORT}"
 }
 
 no_args="true"
