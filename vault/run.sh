@@ -49,6 +49,17 @@ function extendedHelp() {
     To enable [aws] secrets engine { vault secrets enable -path=myaws aws }
     To List all enabled secret engines mechanism { vault secrets list }
 
+    >>>>>>> Dynamic credentials using AWS as secret engine
+    vault write aws/config/root access_key=*********** secret_key=********** region=us-east-1
+    vault write aws/config/lease lease=20s lease_max=1m
+    vault write aws/roles/<ROLE_NAME> policy_arns=arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess credential_type=iam_user
+    vault read aws/creds/<ROLE_NAME>
+
+    >>>>>>>>>>>> Create AppRole and generating role id/role secrets
+    vault write auth/approle/role/<APPROLE_NAME> policies=<APPROLE_POLICY>
+    vault read auth/approle/role/role-id
+    vault write -f auth/approle/role/secret-id
+
     To login with a token { vault login <TOKEN> }
     To login by with a user: { vault login -method=userpass username=admin }
     ------------------------------------------------------------------------------

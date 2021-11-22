@@ -29,7 +29,7 @@ function createAdminUser() {
 
 function cleanup() {
 #    vault token revoke $ROOT_TOKEN # Idieally root token needs to be reoved in Prod, okay to keep only for testing
-    rm -rf /tmp/out.txt
+#    rm -rf /tmp/out.txt
     unset KEY_1
     unset KEY_2
     unset KEY_3
