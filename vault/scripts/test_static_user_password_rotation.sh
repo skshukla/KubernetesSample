@@ -4,7 +4,6 @@ export ROOT_DB_USER=root
 export ROOT_DB_PWD=12345678
 export DB_POD_NAME=mypg002
 export PG_USER_ROLE=vaultedu
-#export PG_NODE_PORT=31065
 #---------------------------------------------
 
 function runPGDatabase() {
@@ -55,7 +54,7 @@ vault write database/static-roles/education \
     db_name=postgresql \
     rotation_statements=@rotation.sql \
     username="vaultedu" \
-    rotation_period=86400
+    rotation_period=60
 }
 
 
@@ -65,13 +64,7 @@ function testResult() {
     INFO=$(vault read database/static-creds/education -format=json)
     echo 'User Info : '
     echo $INFO | jq .
-#    USERNAME=$(echo $INFO | jq -r .data.username)
-#    PASSWORD=$(echo $INFO | jq -r .data.password)
-#    echo "************************* Use this command to login *************************
-#    psql -h kube0 -p $PG_NODE_PORT --db=postgres --user=$USERNAME
-#    And once done, use password: $PASSWORD"
 }
-
 # ---------------------
 
 runPGDatabase
@@ -88,6 +81,3 @@ vault login -method=userpass username=admin password=admin123
 vault write -f database/rotate-role/education
 
 testResult
-
-
-

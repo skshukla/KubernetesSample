@@ -38,6 +38,9 @@ vault write database/config/postgresql \
      username="$ROOT_DB_USER" \
      password="$ROOT_DB_PWD"
 
+# Rotate the root credentials so that other than Vault no body knows it. Now onwards create as many users/roles as you want using vault. Even if a new root is needed another super user account can be created as well.
+vault write -force database/rotate-root/postgresql
+
 tee readonly.sql <<EOF
 CREATE ROLE "{{name}}" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}' INHERIT;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO "{{name}}";
