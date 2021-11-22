@@ -51,7 +51,6 @@ EOF
 
 function setupVaultForKubeAuth() {
     vault login -method=userpass username=admin password=admin123
-    vault secrets enable kv || true;
 
     scp sachin@kube0:/etc/kubernetes/pki/ca.crt /tmp/ca.crt
 

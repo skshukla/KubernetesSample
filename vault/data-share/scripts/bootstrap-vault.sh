@@ -18,9 +18,19 @@ function unsealVault() {
     vault operator unseal $KEY_3
 }
 
+function enablePlugins() {
+    vault auth enable approle || true;
+    vault auth enable github || true;
+    vault auth enable kubernetes || true;
+    vault auth enable userpass || true;
+#   ------------------------------------------------
+    vault secrets enable aws || true;
+    vault secrets enable database
+    vault secrets enable kv || true;
+
+}
+
 function createAdminUser() {
-    vault login $ROOT_TOKEN
-    vault auth enable userpass
     vault policy write admin ${DATA_SHARE_DIR}/config/admin-policy.hcl
     vault write auth/userpass/users/admin password="admin123" policies=admin
     echo "Admin user has been created for vault..with username {admin}, password {admin123}"
@@ -40,6 +50,8 @@ sleep 5
 
 initVault
 unsealVault
+vault login $ROOT_TOKEN
+enablePlugins
 createAdminUser
 cleanup
 

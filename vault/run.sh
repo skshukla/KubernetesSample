@@ -61,7 +61,7 @@ function extendedHelp() {
     vault write -f auth/approle/role/secret-id
 
     To login with a token { vault login <TOKEN> }
-    To login by with a user: { vault login -method=userpass username=admin }
+    To login by with a user: { vault login -method=userpass username=admin password=admin123 }
     ------------------------------------------------------------------------------
     "
 }
