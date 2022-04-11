@@ -57,7 +57,7 @@ spec:
 #                && /opt/bitnami/kafka/bin/kafka-topics.sh --create --zookeeper zookeeper-service.zookeeper.svc.cluster.local:2181/${zk_node} --replication-factor 3 --partitions 1 --topic t-sn-01-p1-r3"]
           env:
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
-              value: "INTERNAL://:9092,EXTERNAL://${MINIKUBE_IP}:${KAFKA_NODEPORT_0}"
+              value: "INTERNAL://:9092,EXTERNAL://kube0:${KAFKA_NODEPORT_0}"
             - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
               value: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT"
             - name: KAFKA_CFG_ZOOKEEPER_CONNECT

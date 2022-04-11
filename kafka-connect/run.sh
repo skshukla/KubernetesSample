@@ -28,12 +28,12 @@ function helpFunction() {
 
 function extendedHelp() {
     echo "
-    [BROWSE CONNECTORS]: http://vm-kube-master-1:30083/connectors
-    [BROWSE CONNECTOR PLUGINS]: http://vm-kube-master-1:30083/connector-plugins
-    [APPLY CONNECTORS]: curl -d @${SCRIPT_DIR}/data-share/config/postgres-connector.json \\
+    [BROWSE CONNECTORS]: http://kube0:30083/connectors
+    [BROWSE CONNECTOR PLUGINS]: http://kube0:30083/connector-plugins
+    [APPLY CONNECTORS]: curl -d @${SCRIPT_DIR}/data-share/config/pg-debezium-connector.json \\
                     -H 'Content-Type: application/json' \\
-                    -X POST http://vm-kube-master-1:30083/connectors
-    [DELETE CONNECTORS]: curl -X DELETE http://vm-kube-master-1:30083/connectors/<connector-name>
+                    -X POST http://kube0:30083/connectors
+    [DELETE CONNECTORS]: curl -X DELETE http://kube0:30083/connectors/<connector-name>
     ------------------------------------------------------------------------------
     "
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # --------------------------------------------
-export KUBE_MASTER_IP=192.168.10.101
+export KUBE_MASTER_IP=192.168.10.100
 export KAFKA_NODEPORT_0="${KAFKA_NODEPORT_0:-30092}"
 export KAFKA_NODEPORT_SECURE_0="${KAFKA_NODEPORT_SECURE_0:-30192}"
 export KAFKA_NODEPORT_1="${KAFKA_NODEPORT_1:-30093}"
@@ -140,7 +140,6 @@ function waitForZKToUpAndRunning {
 
 
 function delete() {
-#    eval $(minikube docker-env)
     kubectl -n kafka delete statefulset.apps/kafka-d-0 service/kafka-0 persistentvolumeclaim/kafka-data-kafka-d-0-0 persistentvolumeclaim/my-hostpath-volume-kafka-d-0-0
     kubectl delete pv kafka-pv || true;
     kubectl delete ns kafka
@@ -162,7 +161,6 @@ function runKafDrop() {
 }
 
 function runKafka() {
-#    eval $(minikube docker-env)
     kubectl create ns kafka
     echo 'Going to create the kafka cluster under node : '$zk_node
 
