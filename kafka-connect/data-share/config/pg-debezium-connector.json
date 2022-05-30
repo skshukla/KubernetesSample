@@ -12,12 +12,15 @@
     "database.user": "sachin",
     "database.password": "123456",
     "database.dbname" : "mydb",
-    "database.server.name": "my-topics",
+    "database.server.name": "my-topics-07-partitioned",
     "provide.transaction.metadata": "true",
-    "table.include.list": "public.kafka_connect_test_table,public.user_tbl,public.user_address_tbl",
-    "transforms": "ExtractKey",
+    "table.include.list": "public.user_tbl,public.user_address_tbl",
+    "message.key.columns": "public.user_tbl:id;public.user_address_tbl:user_id",
+    "transforms": "unwrap,ExtractKey,FlattenStruct",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.ExtractKey.type": "org.apache.kafka.connect.transforms.ValueToKey",
-    "transforms.ExtractKey.fields": "id"
-
+    "transforms.ExtractKey.fields": "id",
+    "transforms.FlattenStruct.type" : "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.FlattenStruct.field": "id"
   }
 }

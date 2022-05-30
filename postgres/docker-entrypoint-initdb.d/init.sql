@@ -20,6 +20,14 @@ insert into public.kafka_connect_test_table (title, author,author_age) values ('
 ;
 
 
+
+drop table if exists public.user_address_tbl
+;
+
+drop table if exists public.user_tbl
+;
+
+
 create table user_tbl(
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(100) not NULL,
@@ -32,7 +40,7 @@ create table user_address_tbl(
     address VARCHAR(100) not NULL,
     city VARCHAR(100) not NULL,
     zip INT not NULL,
-    user_id INT,
+    user_id INT REFERENCES user_tbl ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES user_tbl(id)
 )
 ;

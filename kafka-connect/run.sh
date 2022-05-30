@@ -18,7 +18,7 @@ RUN_AS_CLUSTER="false"
 function helpFunction() {
     echo 'Use [-c] option to run the application as clustered'
     echo 'Use [-d] option to delete only the resources and exit'
-    echo 'Use [-f] option to delete and clean the resouces previously run (should be used for a fresh clean run)'
+    echo 'Use [-f] option to delete and clean the resources previously run (should be used for a fresh clean run)'
     echo 'Use [-h] option to see the help'
     echo 'Use [-x] option to see extended help'
     echo 'Use [-w] option to start watching the app at last'

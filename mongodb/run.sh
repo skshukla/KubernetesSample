@@ -5,19 +5,24 @@ export MONGO_NODEPORT="${MONGO_NODEPORT:-30017}"
 # --------------------------------------------
 
 
+V_PROJ_DIR="/home/sachin/KubernetesSample/mongodb"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJ_DIR=$SCRIPT_DIR/..
 
-source $PROJ_DIR/scripts/refreshMinikubeIP.sh
-MINIKUBE_IP=$(minikube ip)
-echo 'MINIKUBE_IP='$MINIKUBE_IP
-export MINIKUBE_IP="${MINIKUBE_IP}"
+
+export V_DATA_SHARE_DIR=$V_PROJ_DIR/data-share
+
+#source $PROJ_DIR/scripts/refreshMinikubeIP.sh
+#MINIKUBE_IP=$(minikube ip)
+#echo 'MINIKUBE_IP='$MINIKUBE_IP
+#export MINIKUBE_IP="${MINIKUBE_IP}"
 
 
 START_WATCH="false"
 DELETE_RESOURCES_ONLY="false"
 FORCE_CLEAN="false"
 RUN_AS_CLUSTER="false"
+export NS="mongo"
 
 
 function helpFunction() {
@@ -30,15 +35,23 @@ function helpFunction() {
 }
 
 function delete() {
-    eval $(minikube docker-env)
-    kubectl delete svc mongo-svc || true;
-    kubectl delete statefulset mongo-ss
-    kubectl delete pvc mongo-persistent-storage-mongo-ss-0
+#    eval $(minikube docker-env)
+
+    kubectl -n $NS patch pvc mongodb-data-share-pvc -p '{"metadata":{"finalizers": []}}' --type=merge || true;
+    sleep 8
+
+    kubectl -n $NS delete svc mongo-svc || true;
+    kubectl -n $NS delete statefulset mongo-ss
+    kubectl -n $NS delete pvc mongo-persistent-storage-mongo-ss-0
+    kubectl -n $NS delete pvc mongodb-data-share-pvc
+    kubectl delete pv mongodb-data-share-pv
+
+    kubectl delete ns $NS
+
 }
 
 function runMongo() {
-    eval $(minikube docker-env)
-
+    kubectl create ns $NS
     if [[ "${RUN_AS_CLUSTER}" == "true" ]]; then
             echo 'MongoDB in clustered mode is yet not supported!!'
             exit 1;
@@ -85,6 +98,6 @@ fi
 
 
 if [[ "$START_WATCH" == "true" ]]; then
-    $PROJ_DIR/scripts/watch_app mongo
+    watch "kubectl -n $NS get svc,deployments,statefulset,pods,pv,pvc -o wide --show-labels"
 fi
 

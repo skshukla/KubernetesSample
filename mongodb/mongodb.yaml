@@ -1,6 +1,88 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongodb-data-share-pv
+  namespace: $NS
+spec:
+  hostPath:
+    path: ${V_DATA_SHARE_DIR}
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: manual
+
+---
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-data-share-pvc
+  namespace: $NS
+spec:
+  volumeName: mongodb-data-share-pv
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: manual
+
+
+---
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-ss
+  namespace: $NS
+spec:
+  replicas: 1
+  serviceName: mongo-svc
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      namespace: $NS
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - image: mongo:latest
+          name: mongo
+          ports:
+            - name: mongo
+              containerPort: 27017
+              hostPort: 27017
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+            - name: mongodb-data-share-pvc-vol
+              mountPath: /data-share
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 10 && mongo < /data-share/init.js"]
+
+      volumes:
+        - name: mongo-persistent-storage
+          emptyDir: {}
+        - name: mongodb-data-share-pvc-vol
+          persistentVolumeClaim:
+            claimName: mongodb-data-share-pvc
+
+---
+
+apiVersion: v1
 kind: Service
 metadata:
+  namespace: $NS
   labels:
     app: mongo
   name: mongo-svc
@@ -16,38 +98,5 @@ spec:
 status:
   loadBalancer: {}
 
----
 
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: mongo-ss
-spec:
-  replicas: 1
-  serviceName: mongo-svc
-  selector:
-    matchLabels:
-      app: mongo
-  template:
-    metadata:
-      labels:
-        app: mongo
-    spec:
-      containers:
-        - image: mongo:latest
-          name: mongo
-          ports:
-            - name: mongo
-              containerPort: 27017
-              hostPort: 27017
-          volumeMounts:
-            - name: mongo-persistent-storage
-              mountPath: /data/db
-  volumeClaimTemplates:
-    - metadata:
-        name: mongo-persistent-storage
-      spec:
-        accessModes: [ "ReadWriteMany" ]
-        resources:
-          requests:
-            storage: 1Gi
+
