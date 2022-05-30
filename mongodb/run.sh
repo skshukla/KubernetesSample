@@ -59,6 +59,7 @@ function runMongo() {
             $PROJ_DIR/scripts/kubectl_advance -a -f $SCRIPT_DIR/mongodb.yaml
     fi
 
+    echo "\n\n\t****** tUse credentials as {sachin/123456} to connect to database {mydb} *********\n\n"
 }
 
 
